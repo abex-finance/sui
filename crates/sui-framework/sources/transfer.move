@@ -4,6 +4,7 @@
 module sui::transfer {
     use std::option::{Self, Option};
     use sui::id::{Self, ID, VersionedID};
+    use sui::tx_context::{Self, TxContext};
 
     // To allow access to transfer_to_object_unsafe.
     friend sui::bag;
@@ -50,6 +51,11 @@ module sui::transfer {
         obj: T,
         /// Address the object will be transferred to.
         recipient: address,
+    }
+
+    /// Handy method to simplify most of the transfers.
+    public fun transfer_to_sender<T: key>(obj: T, ctx: &mut TxContext) {
+        transfer(obj, tx_context::sender(ctx))
     }
 
     /// Transfer ownership of `obj` to `recipient`. `obj` must have the
