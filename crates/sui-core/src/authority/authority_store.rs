@@ -140,8 +140,7 @@ pub struct SuiDataStore<const ALL_OBJ_VER: bool, S> {
 impl<const ALL_OBJ_VER: bool, S: Eq + Serialize + for<'de> Deserialize<'de>>
     SuiDataStore<ALL_OBJ_VER, S>
 {
-    /// Open an authority store by directory path
-    pub fn open<P: AsRef<Path>>(path: P, db_options: Option<Options>) -> Self {
+    pub fn open_without_genesis<P: AsRef<Path>>(path: P, db_options: Option<Options>) -> Arc<Self> {
         let (options, point_lookup) = default_db_options(db_options, None);
 
         let db = {
@@ -219,7 +218,7 @@ impl<const ALL_OBJ_VER: bool, S: Eq + Serialize + for<'de> Deserialize<'de>>
             .unwrap_or(0);
         let next_pending_seq = AtomicU64::new(pending_seq);
 
-        Self {
+        Arc::new(Self {
             wal,
             objects,
             all_object_versions,
@@ -239,7 +238,22 @@ impl<const ALL_OBJ_VER: bool, S: Eq + Serialize + for<'de> Deserialize<'de>>
             batches,
             last_consensus_index,
             epochs,
+        })
+    }
+
+    pub async fn open_with_genesis<P: AsRef<Path>>(
+        path: P,
+        db_options: Option<Options>,
+        genesis: &Genesis,
+    ) -> Arc<Self> {
+        let store = Self::open_without_genesis(path, db_options);
+        if store
+            .database_is_empty()
+            .expect("Empty check should not fail")
+        {
+            store.init_state_with_genesis(genesis).await;
         }
+        store
     }
 
     // TODO: Async retry method, using tokio-retry crate.
@@ -1321,6 +1335,148 @@ impl<const ALL_OBJ_VER: bool, S: Eq + Serialize + for<'de> Deserialize<'de>>
         Ok(self.epochs.iter().skip_to_last().next().unwrap().1)
     }
 
+    async fn init_state_with_genesis(self: &Arc<Self>, genesis: &Genesis) {
+        let native_functions =
+            sui_framework::natives::all_natives(MOVE_STDLIB_ADDRESS, SUI_FRAMEWORK_ADDRESS);
+        // TODO: No ndeed for Arc
+        let move_vm = Arc::new(
+            adapter::new_move_vm(native_functions.clone())
+                .expect("We defined natives to not fail here"),
+        );
+        let mut genesis_ctx = genesis.genesis_ctx().to_owned();
+        for genesis_modules in genesis.modules() {
+            self.store_package_and_init_modules_for_genesis(
+                &native_functions,
+                &mut genesis_ctx,
+                genesis_modules.to_owned(),
+            )
+            .await
+            .expect("We expect publishing the Genesis packages to not fail");
+        }
+        let committee = genesis.committee();
+        self.bulk_object_insert(&genesis.objects().iter().collect::<Vec<_>>())
+            .await
+            .expect("Cannot bulk insert genesis objects");
+        self.generate_genesis_system_object(&move_vm, &committee, &mut genesis_ctx)
+            .await
+            .expect("Cannot generate genesis system object");
+
+        self.insert_new_epoch_info(EpochInfoLocals {
+            committee,
+            validator_halted: false,
+        })
+        .expect("Cannot initialize the first epoch entry");
+    }
+
+    /// Persist the Genesis package to DB along with the side effects for module initialization
+    async fn store_package_and_init_modules_for_genesis(
+        self: &Arc<Self>,
+        native_functions: &NativeFunctionTable,
+        ctx: &mut TxContext,
+        modules: Vec<CompiledModule>,
+    ) -> SuiResult {
+        let inputs = Transaction::input_objects_in_compiled_modules(&modules);
+        let ids: Vec<_> = inputs.iter().map(|kind| kind.object_id()).collect();
+        let input_objects = self.get_objects(&ids[..])?;
+        // When publishing genesis packages, since the std framework packages all have
+        // non-zero addresses, [`Transaction::input_objects_in_compiled_modules`] will consider
+        // them as dependencies even though they are not. Hence input_objects contain objects
+        // that don't exist on-chain because they are yet to be published.
+        #[cfg(debug_assertions)]
+        {
+            let to_be_published_addresses: HashSet<_> = modules
+                .iter()
+                .map(|module| *module.self_id().address())
+                .collect();
+            assert!(
+                // An object either exists on-chain, or is one of the packages to be published.
+                inputs
+                    .iter()
+                    .zip(input_objects.iter())
+                    .all(|(kind, obj_opt)| obj_opt.is_some()
+                        || to_be_published_addresses.contains(&kind.object_id()))
+            );
+        }
+        let filtered = inputs
+            .into_iter()
+            .zip(input_objects.into_iter())
+            .filter_map(|(input, object_opt)| object_opt.map(|object| (input, object)))
+            .collect::<Vec<_>>();
+
+        debug_assert!(ctx.digest() == TransactionDigest::genesis());
+        let mut temporary_store =
+            AuthorityTemporaryStore::new(self.clone(), InputObjects::new(filtered), ctx.digest());
+        let package_id = ObjectID::from(*modules[0].self_id().address());
+        let natives = native_functions.clone();
+        let mut gas_status = SuiGasStatus::new_unmetered();
+        let vm = adapter::verify_and_link(
+            &temporary_store,
+            &modules,
+            package_id,
+            natives,
+            &mut gas_status,
+        )?;
+        adapter::store_package_and_init_modules(
+            &mut temporary_store,
+            &vm,
+            modules,
+            ctx,
+            &mut gas_status,
+        )?;
+        self.update_objects_state_for_genesis(temporary_store, ctx.digest())
+            .await
+    }
+
+    async fn generate_genesis_system_object(
+        self: &Arc<Self>,
+        move_vm: &Arc<MoveVM>,
+        committee: &Committee,
+        genesis_ctx: &mut TxContext,
+    ) -> SuiResult {
+        let genesis_digest = genesis_ctx.digest();
+        let mut temporary_store =
+            AuthorityTemporaryStore::new(self.clone(), InputObjects::new(vec![]), genesis_digest);
+        let mut pubkeys = Vec::new();
+        for name in committee.voting_rights.keys() {
+            pubkeys.push(committee.public_key(name)?.to_bytes().to_vec());
+        }
+        // TODO: May use separate sui address than derived from pubkey.
+        let sui_addresses: Vec<AccountAddress> = committee
+            .voting_rights
+            .keys()
+            .map(|pk| SuiAddress::from(pk).into())
+            .collect();
+        // TODO: Allow config to specify human readable validator names.
+        let names: Vec<Vec<u8>> = (0..sui_addresses.len())
+            .map(|i| Vec::from(format!("Validator{}", i).as_bytes()))
+            .collect();
+        // TODO: Change voting_rights to use u64 instead of usize.
+        let stakes: Vec<u64> = committee
+            .voting_rights
+            .values()
+            .map(|v| *v as u64)
+            .collect();
+        adapter::execute(
+            move_vm,
+            &mut temporary_store,
+            ModuleId::new(SUI_FRAMEWORK_ADDRESS, ident_str!("genesis").to_owned()),
+            &ident_str!("create").to_owned(),
+            vec![],
+            vec![
+                CallArg::Pure(bcs::to_bytes(&pubkeys).unwrap()),
+                CallArg::Pure(bcs::to_bytes(&sui_addresses).unwrap()),
+                CallArg::Pure(bcs::to_bytes(&names).unwrap()),
+                // TODO: below is netaddress, for now just use names as we don't yet want to expose them.
+                CallArg::Pure(bcs::to_bytes(&names).unwrap()),
+                CallArg::Pure(bcs::to_bytes(&stakes).unwrap()),
+            ],
+            &mut SuiGasStatus::new_unmetered(),
+            genesis_ctx,
+        )?;
+        self.update_objects_state_for_genesis(temporary_store, genesis_digest)
+            .await
+    }
+
     #[cfg(test)]
     /// Provide read access to the `schedule` table (useful for testing).
     pub fn get_schedule(&self, object_id: &ObjectID) -> SuiResult<Option<SequenceNumber>> {
@@ -1426,121 +1582,4 @@ impl From<&ObjectRef> for ObjectKey {
 pub enum UpdateType {
     Transaction(TxSequenceNumber, TransactionEffectsDigest),
     Genesis,
-}
-
-/// Persist the Genesis package to DB along with the side effects for module initialization
-pub async fn store_package_and_init_modules_for_genesis<
-    const A: bool,
-    S: Eq + Serialize + for<'de> Deserialize<'de>,
->(
-    store: &Arc<SuiDataStore<A, S>>,
-    native_functions: &NativeFunctionTable,
-    ctx: &mut TxContext,
-    modules: Vec<CompiledModule>,
-) -> SuiResult {
-    let inputs = Transaction::input_objects_in_compiled_modules(&modules);
-    let ids: Vec<_> = inputs.iter().map(|kind| kind.object_id()).collect();
-    let input_objects = store.get_objects(&ids[..])?;
-    // When publishing genesis packages, since the std framework packages all have
-    // non-zero addresses, [`Transaction::input_objects_in_compiled_modules`] will consider
-    // them as dependencies even though they are not. Hence input_objects contain objects
-    // that don't exist on-chain because they are yet to be published.
-    #[cfg(debug_assertions)]
-    {
-        let to_be_published_addresses: HashSet<_> = modules
-            .iter()
-            .map(|module| *module.self_id().address())
-            .collect();
-        assert!(
-            // An object either exists on-chain, or is one of the packages to be published.
-            inputs
-                .iter()
-                .zip(input_objects.iter())
-                .all(|(kind, obj_opt)| obj_opt.is_some()
-                    || to_be_published_addresses.contains(&kind.object_id()))
-        );
-    }
-    let filtered = inputs
-        .into_iter()
-        .zip(input_objects.into_iter())
-        .filter_map(|(input, object_opt)| object_opt.map(|object| (input, object)))
-        .collect::<Vec<_>>();
-
-    debug_assert!(ctx.digest() == TransactionDigest::genesis());
-    let mut temporary_store =
-        AuthorityTemporaryStore::new(store.clone(), InputObjects::new(filtered), ctx.digest());
-    let package_id = ObjectID::from(*modules[0].self_id().address());
-    let natives = native_functions.clone();
-    let mut gas_status = SuiGasStatus::new_unmetered();
-    let vm = adapter::verify_and_link(
-        &temporary_store,
-        &modules,
-        package_id,
-        natives,
-        &mut gas_status,
-    )?;
-    adapter::store_package_and_init_modules(
-        &mut temporary_store,
-        &vm,
-        modules,
-        ctx,
-        &mut gas_status,
-    )?;
-    store
-        .update_objects_state_for_genesis(temporary_store, ctx.digest())
-        .await
-}
-
-pub async fn generate_genesis_system_object<
-    const A: bool,
-    S: Eq + Serialize + for<'de> Deserialize<'de>,
->(
-    store: &Arc<SuiDataStore<A, S>>,
-    move_vm: &Arc<MoveVM>,
-    committee: &Committee,
-    genesis_ctx: &mut TxContext,
-) -> SuiResult {
-    let genesis_digest = genesis_ctx.digest();
-    let mut temporary_store =
-        AuthorityTemporaryStore::new(store.clone(), InputObjects::new(vec![]), genesis_digest);
-    let mut pubkeys = Vec::new();
-    for name in committee.voting_rights.keys() {
-        pubkeys.push(committee.public_key(name)?.to_bytes().to_vec());
-    }
-    // TODO: May use separate sui address than derived from pubkey.
-    let sui_addresses: Vec<AccountAddress> = committee
-        .voting_rights
-        .keys()
-        .map(|pk| SuiAddress::from(pk).into())
-        .collect();
-    // TODO: Allow config to specify human readable validator names.
-    let names: Vec<Vec<u8>> = (0..sui_addresses.len())
-        .map(|i| Vec::from(format!("Validator{}", i).as_bytes()))
-        .collect();
-    // TODO: Change voting_rights to use u64 instead of usize.
-    let stakes: Vec<u64> = committee
-        .voting_rights
-        .values()
-        .map(|v| *v as u64)
-        .collect();
-    adapter::execute(
-        move_vm,
-        &mut temporary_store,
-        ModuleId::new(SUI_FRAMEWORK_ADDRESS, ident_str!("genesis").to_owned()),
-        &ident_str!("create").to_owned(),
-        vec![],
-        vec![
-            CallArg::Pure(bcs::to_bytes(&pubkeys).unwrap()),
-            CallArg::Pure(bcs::to_bytes(&sui_addresses).unwrap()),
-            CallArg::Pure(bcs::to_bytes(&names).unwrap()),
-            // TODO: below is netaddress, for now just use names as we don't yet want to expose them.
-            CallArg::Pure(bcs::to_bytes(&names).unwrap()),
-            CallArg::Pure(bcs::to_bytes(&stakes).unwrap()),
-        ],
-        &mut SuiGasStatus::new_unmetered(),
-        genesis_ctx,
-    )?;
-    store
-        .update_objects_state_for_genesis(temporary_store, genesis_digest)
-        .await
 }

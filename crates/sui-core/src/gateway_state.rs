@@ -199,7 +199,7 @@ impl<A> GatewayState<A> {
         path: PathBuf,
         authorities: AuthorityAggregator<A>,
     ) -> SuiResult<Self> {
-        let store = Arc::new(GatewayStore::open(path, None));
+        let store = GatewayStore::open_without_genesis(path, None);
         let next_tx_seq_number = AtomicU64::new(store.next_sequence_number()?);
         Ok(Self {
             store: store.clone(),

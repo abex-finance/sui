@@ -61,24 +61,19 @@ pub struct ConfigurableBatchActionClient {
 
 impl ConfigurableBatchActionClient {
     #[cfg(test)]
-    pub async fn new(committee: Committee, address: PublicKeyBytes, secret: KeyPair) -> Self {
+    pub async fn new(address: PublicKeyBytes, secret: KeyPair) -> Self {
         // Random directory
         let dir = env::temp_dir();
         let path = dir.join(format!("DB_{:?}", ObjectID::random()));
         fs::create_dir(&path).unwrap();
 
-        let store = Arc::new(AuthorityStore::open(path.clone(), None));
-        let state = AuthorityState::new(
-            committee.clone(),
-            address,
-            Arc::pin(secret),
-            store,
-            None,
+        let store = AuthorityStore::open_with_genesis(
+            path.clone(),
             None,
             &sui_config::genesis::Genesis::get_default_genesis(),
-            false,
         )
         .await;
+        let state = AuthorityState::new(address, Arc::pin(secret), store, None, None, false).await;
 
         ConfigurableBatchActionClient {
             state: Arc::new(state),
@@ -237,8 +232,7 @@ pub async fn init_configurable_authorities(
     let mut names = Vec::new();
     let mut states = Vec::new();
     for ((authority_name, secret), objects) in key_pairs.into_iter().zip(genesis_objects) {
-        let client =
-            ConfigurableBatchActionClient::new(committee.clone(), authority_name, secret).await;
+        let client = ConfigurableBatchActionClient::new(authority_name, secret).await;
         for object in objects {
             client.state.insert_genesis_object(object).await;
         }

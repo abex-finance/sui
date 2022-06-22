@@ -92,10 +92,6 @@ use sui_types::messages_checkpoint::{
 use sui_types::object::Owner;
 use sui_types::sui_system_state::SuiSystemState;
 
-use self::authority_store::{
-    generate_genesis_system_object, store_package_and_init_modules_for_genesis,
-};
-
 pub mod authority_notifier;
 
 pub const MAX_ITEMS_LIMIT: u64 = 100_000;
@@ -979,13 +975,11 @@ impl AuthorityState {
     }
 
     pub async fn new(
-        committee: Committee,
         name: AuthorityName,
         secret: StableSyncAuthoritySigner,
         store: Arc<AuthorityStore>,
         indexes: Option<Arc<IndexStore>>,
         checkpoints: Option<Arc<Mutex<CheckpointStore>>>,
-        genesis: &Genesis,
         enable_event_processing: bool,
     ) -> Self {
         let (tx, _rx) = tokio::sync::broadcast::channel(BROADCAST_CAPACITY);
@@ -995,38 +989,10 @@ impl AuthorityState {
             adapter::new_move_vm(native_functions.clone())
                 .expect("We defined natives to not fail here"),
         );
-
-        // Only initialize an empty database.
-        if store
+        assert!(!store
             .database_is_empty()
-            .expect("Database read should not fail.")
-        {
-            let mut genesis_ctx = genesis.genesis_ctx().to_owned();
-            for genesis_modules in genesis.modules() {
-                store_package_and_init_modules_for_genesis(
-                    &store,
-                    &native_functions,
-                    &mut genesis_ctx,
-                    genesis_modules.to_owned(),
-                )
-                .await
-                .expect("We expect publishing the Genesis packages to not fail");
-            }
-            store
-                .bulk_object_insert(&genesis.objects().iter().collect::<Vec<_>>())
-                .await
-                .expect("Cannot bulk insert genesis objects");
-            generate_genesis_system_object(&store, &move_vm, &committee, &mut genesis_ctx)
-                .await
-                .expect("Cannot generate genesis system object");
+            .expect("DB empty check should not fail"));
 
-            store
-                .insert_new_epoch_info(EpochInfoLocals {
-                    committee,
-                    validator_halted: false,
-                })
-                .expect("Cannot initialize the first epoch entry");
-        }
         let current_epoch_info = store
             .get_last_epoch_info()
             .expect("Fail to load the current epoch info");

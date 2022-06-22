@@ -318,12 +318,7 @@ impl AuthorityAPI for LocalAuthorityClient {
 
 impl LocalAuthorityClient {
     #[cfg(test)]
-    pub async fn new(
-        committee: Committee,
-        address: PublicKeyBytes,
-        secret: KeyPair,
-        genesis: &Genesis,
-    ) -> Self {
+    pub async fn new(address: PublicKeyBytes, secret: KeyPair, genesis: &Genesis) -> Self {
         use crate::authority::AuthorityStore;
         use crate::checkpoints::CheckpointStore;
         use parking_lot::Mutex;
@@ -338,20 +333,18 @@ impl LocalAuthorityClient {
 
         let mut store_path = path.clone();
         store_path.push("store");
-        let store = Arc::new(AuthorityStore::open(&store_path, None));
+        let store = AuthorityStore::open_with_genesis(&store_path, None, genesis).await;
         let mut checkpoints_path = path.clone();
         checkpoints_path.push("checkpoints");
         let checkpoints = CheckpointStore::open(&checkpoints_path, None, address, secret.clone())
             .expect("Should not fail to open local checkpoint DB");
 
         let state = AuthorityState::new(
-            committee.clone(),
             address,
             secret.clone(),
             store,
             None,
             Some(Arc::new(Mutex::new(checkpoints))),
-            genesis,
             false,
         )
         .await;
@@ -363,13 +356,12 @@ impl LocalAuthorityClient {
 
     #[cfg(test)]
     pub async fn new_with_objects(
-        committee: Committee,
         address: PublicKeyBytes,
         secret: KeyPair,
         objects: Vec<Object>,
         genesis: &Genesis,
     ) -> Self {
-        let client = Self::new(committee, address, secret, genesis).await;
+        let client = Self::new(address, secret, genesis).await;
 
         for object in objects {
             client.state.insert_genesis_object(object).await;

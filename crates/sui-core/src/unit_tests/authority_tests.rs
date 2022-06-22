@@ -1255,10 +1255,9 @@ async fn test_account_state_unknown_account() {
 #[tokio::test]
 async fn test_authority_persist() {
     let seed = [1u8; 32];
-    let (committee, _, authority_key) =
-        crate::authority_batch::batch_tests::init_state_parameters_from_rng(
-            &mut StdRng::from_seed(seed),
-        );
+    let (_, _, authority_key) = crate::authority_batch::batch_tests::init_state_parameters_from_rng(
+        &mut StdRng::from_seed(seed),
+    );
 
     // Create a random directory to store the DB
     let dir = env::temp_dir();
@@ -1266,9 +1265,9 @@ async fn test_authority_persist() {
     fs::create_dir(&path).unwrap();
 
     // Create an authority
-    let store = Arc::new(AuthorityStore::open(&path, None));
-    let authority =
-        crate::authority_batch::batch_tests::init_state(committee, authority_key, store).await;
+    let store =
+        AuthorityStore::open_with_genesis(&path, None, &Genesis::get_default_genesis()).await;
+    let authority = crate::authority_batch::batch_tests::init_state(authority_key, store).await;
 
     // Create an object
     let recipient = dbg_addr(2);
@@ -1283,13 +1282,12 @@ async fn test_authority_persist() {
 
     // Reopen the same authority with the same path
     let seed = [1u8; 32];
-    let (committee, _, authority_key) =
-        crate::authority_batch::batch_tests::init_state_parameters_from_rng(
-            &mut StdRng::from_seed(seed),
-        );
-    let store = Arc::new(AuthorityStore::open(&path, None));
-    let authority2 =
-        crate::authority_batch::batch_tests::init_state(committee, authority_key, store).await;
+    let (_, _, authority_key) = crate::authority_batch::batch_tests::init_state_parameters_from_rng(
+        &mut StdRng::from_seed(seed),
+    );
+    let store =
+        AuthorityStore::open_with_genesis(&path, None, &Genesis::get_default_genesis()).await;
+    let authority2 = crate::authority_batch::batch_tests::init_state(authority_key, store).await;
     let obj2 = authority2.get_object(&object_id).await.unwrap().unwrap();
 
     // Check the object is present
@@ -1563,8 +1561,8 @@ async fn test_store_revert_state_update() {
 // helpers
 
 #[cfg(test)]
-fn init_state_parameters() -> (Committee, SuiAddress, KeyPair, Arc<AuthorityStore>) {
-    let (authority_address, authority_key) = get_key_pair();
+async fn init_state_parameters() -> (KeyPair, Arc<AuthorityStore>) {
+    let (_, authority_key) = get_key_pair();
     let mut authorities = BTreeMap::new();
     authorities.insert(
         /* address */ *authority_key.public_key_bytes(),
@@ -1578,21 +1576,20 @@ fn init_state_parameters() -> (Committee, SuiAddress, KeyPair, Arc<AuthorityStor
     let path = dir.join(format!("DB_{:?}", ObjectID::random()));
     fs::create_dir(&path).unwrap();
 
-    let store = Arc::new(AuthorityStore::open(path, None));
-    (committee, authority_address, authority_key, store)
+    let store =
+        AuthorityStore::open_with_genesis(&path, None, &Genesis::get_default_genesis()).await;
+    (authority_key, store)
 }
 
 #[cfg(test)]
 pub async fn init_state() -> AuthorityState {
-    let (committee, _, authority_key, store) = init_state_parameters();
+    let (authority_key, store) = init_state_parameters().await;
     AuthorityState::new(
-        committee,
         *authority_key.public_key_bytes(),
         Arc::pin(authority_key),
         store,
         None,
         None,
-        &sui_config::genesis::Genesis::get_default_genesis(),
         false,
     )
     .await

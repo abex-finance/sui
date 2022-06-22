@@ -709,7 +709,12 @@ async fn test_batch_to_checkpointing() {
 
     let mut store_path = path.clone();
     store_path.push("store");
-    let store = Arc::new(AuthorityStore::open(&store_path, None));
+    let store = AuthorityStore::open_with_genesis(
+        &store_path,
+        None,
+        &sui_config::genesis::Genesis::get_default_genesis(),
+    )
+    .await;
 
     let mut checkpoints_path = path.clone();
     checkpoints_path.push("checkpoints");
@@ -726,13 +731,11 @@ async fn test_batch_to_checkpointing() {
     ));
 
     let state = AuthorityState::new(
-        committee,
         *secret.public_key_bytes(),
         secret,
         store.clone(),
         None,
         Some(checkpoints.clone()),
-        &sui_config::genesis::Genesis::get_default_genesis(),
         false,
     )
     .await;
@@ -812,16 +815,19 @@ async fn test_batch_to_checkpointing_init_crash() {
 
     // Scope to ensure all variables are dropped
     {
-        let store = Arc::new(AuthorityStore::open(&store_path, None));
+        let store = AuthorityStore::open_with_genesis(
+            &store_path,
+            None,
+            &sui_config::genesis::Genesis::get_default_genesis(),
+        )
+        .await;
 
         let state = AuthorityState::new(
-            committee.clone(),
             *secret.public_key_bytes(),
             secret.clone(),
             store.clone(),
             None,
             None,
-            &sui_config::genesis::Genesis::get_default_genesis(),
             false,
         )
         .await;
@@ -880,7 +886,12 @@ async fn test_batch_to_checkpointing_init_crash() {
 
     // Scope to ensure all variables are dropped
     {
-        let store = Arc::new(AuthorityStore::open(&store_path, None));
+        let store = AuthorityStore::open_with_genesis(
+            &store_path,
+            None,
+            &sui_config::genesis::Genesis::get_default_genesis(),
+        )
+        .await;
 
         let checkpoints = Arc::new(Mutex::new(
             CheckpointStore::open(
@@ -896,13 +907,11 @@ async fn test_batch_to_checkpointing_init_crash() {
         assert_eq!(checkpoints.lock().next_transaction_sequence_expected(), 0);
 
         let state = AuthorityState::new(
-            committee,
             *secret.public_key_bytes(),
             secret,
             store.clone(),
             None,
             Some(checkpoints.clone()),
-            &sui_config::genesis::Genesis::get_default_genesis(),
             false,
         )
         .await;
@@ -1385,7 +1394,7 @@ pub async fn checkpoint_tests_setup(num_objects: usize, batch_interval: Duration
 
         // Make a checkpoint store:
 
-        let store = Arc::new(AuthorityStore::open(&store_path, None));
+        let store = AuthorityStore::open_with_genesis(&store_path, None, &genesis).await;
 
         let mut checkpoint = CheckpointStore::open(
             &checkpoints_path,
@@ -1400,13 +1409,11 @@ pub async fn checkpoint_tests_setup(num_objects: usize, batch_interval: Duration
             .expect("No issues");
         let checkpoint = Arc::new(Mutex::new(checkpoint));
         let authority = AuthorityState::new(
-            committee.clone(),
             *secret.public_key_bytes(),
             secret,
             store.clone(),
             None,
             Some(checkpoint.clone()),
-            &genesis,
             false,
         )
         .await;

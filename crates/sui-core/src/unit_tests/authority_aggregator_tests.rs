@@ -61,14 +61,8 @@ pub async fn init_local_authorities_with_genesis(
     let mut clients = BTreeMap::new();
     let mut states = Vec::new();
     for ((authority_name, secret), objects) in key_pairs.into_iter().zip(genesis_objects) {
-        let client = LocalAuthorityClient::new_with_objects(
-            committee.clone(),
-            authority_name,
-            secret,
-            objects,
-            genesis,
-        )
-        .await;
+        let client =
+            LocalAuthorityClient::new_with_objects(authority_name, secret, objects, genesis).await;
         states.push(client.state.clone());
         clients.insert(authority_name, client);
     }

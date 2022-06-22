@@ -45,18 +45,15 @@ where
 }
 
 pub(crate) async fn init_state(
-    committee: Committee,
     authority_key: KeyPair,
     store: Arc<AuthorityStore>,
 ) -> AuthorityState {
     AuthorityState::new(
-        committee,
         *authority_key.public_key_bytes(),
         Arc::pin(authority_key),
         store,
         None,
         None,
-        &sui_config::genesis::Genesis::get_default_genesis(),
         false,
     )
     .await
@@ -73,12 +70,16 @@ async fn test_open_manager() {
 
     let seed = [1u8; 32];
 
-    let (committee, _, authority_key) =
-        init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
+    let (_, _, authority_key) = init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
     {
         // Create an authority
-        let store = Arc::new(AuthorityStore::open(&path, None));
-        let mut authority_state = init_state(committee, authority_key, store.clone()).await;
+        let store = AuthorityStore::open_with_genesis(
+            &path,
+            None,
+            &sui_config::genesis::Genesis::get_default_genesis(),
+        )
+        .await;
+        let mut authority_state = init_state(authority_key, store.clone()).await;
 
         // TEST 1: init from an empty database should return to a zero block
         let last_block = authority_state
@@ -98,12 +99,16 @@ async fn test_open_manager() {
         drop(authority_state);
     }
     // drop all
-    let (committee, _, authority_key) =
-        init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
+    let (_, _, authority_key) = init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
     {
         // Create an authority
-        let store = Arc::new(AuthorityStore::open(&path, None));
-        let mut authority_state = init_state(committee, authority_key, store.clone()).await;
+        let store = AuthorityStore::open_with_genesis(
+            &path,
+            None,
+            &sui_config::genesis::Genesis::get_default_genesis(),
+        )
+        .await;
+        let mut authority_state = init_state(authority_key, store.clone()).await;
 
         let last_block = authority_state
             .init_batches_from_database()
@@ -120,12 +125,16 @@ async fn test_open_manager() {
         drop(authority_state);
     }
     // drop all
-    let (committee, _, authority_key) =
-        init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
+    let (_, _, authority_key) = init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
     {
         // Create an authority
-        let store = Arc::new(AuthorityStore::open(&path, None));
-        let mut authority_state = init_state(committee, authority_key, store.clone()).await;
+        let store = AuthorityStore::open_with_genesis(
+            &path,
+            None,
+            &sui_config::genesis::Genesis::get_default_genesis(),
+        )
+        .await;
+        let mut authority_state = init_state(authority_key, store.clone()).await;
 
         let last_block = authority_state.init_batches_from_database().unwrap();
 
@@ -145,13 +154,17 @@ async fn test_batch_manager_happy_path() {
     fs::create_dir(&path).unwrap();
 
     // Create an authority
-    let store = Arc::new(AuthorityStore::open(&path, None));
+    let store = AuthorityStore::open_with_genesis(
+        &path,
+        None,
+        &sui_config::genesis::Genesis::get_default_genesis(),
+    )
+    .await;
 
     // Make a test key pair
     let seed = [1u8; 32];
-    let (committee, _, authority_key) =
-        init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
-    let authority_state = Arc::new(init_state(committee, authority_key, store.clone()).await);
+    let (_, _, authority_key) = init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
+    let authority_state = Arc::new(init_state(authority_key, store.clone()).await);
 
     let inner_state = authority_state.clone();
     let _join = tokio::task::spawn(async move {
@@ -204,13 +217,17 @@ async fn test_batch_manager_out_of_order() {
     fs::create_dir(&path).unwrap();
 
     // Create an authority
-    let store = Arc::new(AuthorityStore::open(&path, None));
+    let store = AuthorityStore::open_with_genesis(
+        &path,
+        None,
+        &sui_config::genesis::Genesis::get_default_genesis(),
+    )
+    .await;
 
     // Make a test key pair
     let seed = [1u8; 32];
-    let (committee, _, authority_key) =
-        init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
-    let authority_state = Arc::new(init_state(committee, authority_key, store.clone()).await);
+    let (_, _, authority_key) = init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
+    let authority_state = Arc::new(init_state(authority_key, store.clone()).await);
 
     let inner_state = authority_state.clone();
     let _join = tokio::task::spawn(async move {
@@ -269,13 +286,17 @@ async fn test_batch_manager_drop_out_of_order() {
     fs::create_dir(&path).unwrap();
 
     // Create an authority
-    let store = Arc::new(AuthorityStore::open(&path, None));
+    let store = AuthorityStore::open_with_genesis(
+        &path,
+        None,
+        &sui_config::genesis::Genesis::get_default_genesis(),
+    )
+    .await;
 
     // Make a test key pair
     let seed = [1u8; 32];
-    let (committee, _, authority_key) =
-        init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
-    let authority_state = Arc::new(init_state(committee, authority_key, store.clone()).await);
+    let (_, _, authority_key) = init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
+    let authority_state = Arc::new(init_state(authority_key, store.clone()).await);
 
     let inner_state = authority_state.clone();
     let _join = tokio::task::spawn(async move {
@@ -385,13 +406,17 @@ async fn test_batch_store_retrieval() {
     fs::create_dir(&path).unwrap();
 
     // Create an authority
-    let store = Arc::new(AuthorityStore::open(&path, None));
+    let store = AuthorityStore::open_with_genesis(
+        &path,
+        None,
+        &sui_config::genesis::Genesis::get_default_genesis(),
+    )
+    .await;
 
     // Make a test key pair
     let seed = [1u8; 32];
-    let (committee, _, authority_key) =
-        init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
-    let authority_state = Arc::new(init_state(committee, authority_key, store.clone()).await);
+    let (_, _, authority_key) = init_state_parameters_from_rng(&mut StdRng::from_seed(seed));
+    let authority_state = Arc::new(init_state(authority_key, store.clone()).await);
 
     let inner_state = authority_state.clone();
     let _join = tokio::task::spawn(async move {
@@ -762,15 +787,18 @@ async fn test_safe_batch_stream() {
     authorities.insert(public_key_bytes, 1);
     let committee = Committee::new(0, authorities);
     // Create an authority
-    let store = Arc::new(AuthorityStore::open(&path, None));
+    let store = AuthorityStore::open_with_genesis(
+        &path,
+        None,
+        &sui_config::genesis::Genesis::get_default_genesis(),
+    )
+    .await;
     let state = AuthorityState::new(
-        committee.clone(),
         public_key_bytes,
         Arc::pin(authority_key),
         store.clone(),
         None,
         None,
-        &sui_config::genesis::Genesis::get_default_genesis(),
         false,
     )
     .await;
@@ -810,13 +838,11 @@ async fn test_safe_batch_stream() {
     let (_, authority_key) = get_key_pair();
     let public_key_bytes_b = *authority_key.public_key_bytes();
     let state_b = AuthorityState::new(
-        committee.clone(),
         public_key_bytes_b,
         Arc::pin(authority_key),
         store,
         None,
         None,
-        &sui_config::genesis::Genesis::get_default_genesis(),
         false,
     )
     .await;

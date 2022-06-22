@@ -103,7 +103,6 @@ impl ValidatorPreparer {
                 let auth_state = make_authority_state(
                     &path,
                     db_cpus as i32,
-                    &committee,
                     &validator_config.public_key(),
                     validator_config.key_pair().copy(),
                 );
@@ -259,7 +258,6 @@ pub fn get_multithread_runtime() -> Runtime {
 fn make_authority_state(
     store_path: &Path,
     db_cpus: i32,
-    committee: &Committee,
     pubx: &PublicKeyBytes,
     secx: KeyPair,
 ) -> (AuthorityState, Arc<AuthorityStore>) {
@@ -278,22 +276,16 @@ fn make_authority_state(
     // but keep as an option if we periodically flush WAL
     // manually.
     // opts.set_manual_wal_flush(true);
-
-    let store = Arc::new(AuthorityStore::open(store_path, Some(opts)));
-    (
-        Runtime::new().unwrap().block_on(async {
-            AuthorityState::new(
-                committee.clone(),
-                *pubx,
-                Arc::pin(secx),
-                store.clone(),
-                None,
-                None,
-                &sui_config::genesis::Genesis::get_default_genesis(),
-                false,
-            )
-            .await
-        }),
-        store,
-    )
+    Runtime::new().unwrap().block_on(async {
+        let store = AuthorityStore::open_with_genesis(
+            store_path,
+            Some(opts),
+            &sui_config::genesis::Genesis::get_default_genesis(),
+        )
+        .await;
+        (
+            AuthorityState::new(*pubx, Arc::pin(secx), store.clone(), None, None, false).await,
+            store,
+        )
+    })
 }

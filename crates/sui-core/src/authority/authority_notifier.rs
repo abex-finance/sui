@@ -239,7 +239,7 @@ mod tests {
         let path = dir.join(format!("DB_{:?}", ObjectID::random()));
         fs::create_dir(&path).unwrap();
 
-        let store = Arc::new(AuthorityStore::open(path, None));
+        let store = AuthorityStore::open_without_genesis(path, None);
 
         let notifier = Arc::new(TransactionNotifier::new(store.clone()).unwrap());
 
