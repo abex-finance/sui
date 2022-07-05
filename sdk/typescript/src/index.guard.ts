@@ -246,7 +246,9 @@ export function isSuiMoveObject(obj: any, _argumentName?: string): obj is SuiMov
             typeof obj === "function") &&
         isTransactionDigest(obj.type) as boolean &&
         isObjectContentFields(obj.fields) as boolean &&
-        typeof obj.has_public_transfer === "boolean"
+        (typeof obj.has_public_transfer === "undefined" ||
+            obj.has_public_transfer === false ||
+            obj.has_public_transfer === true)
     )
 }
 
@@ -509,7 +511,8 @@ export function isTransactionEffectsResponse(obj: any, _argumentName?: string): 
             typeof obj === "object" ||
             typeof obj === "function") &&
         isCertifiedTransaction(obj.certificate) as boolean &&
-        isTransactionEffects(obj.effects) as boolean
+        isTransactionEffects(obj.effects) as boolean &&
+        isSequenceNumber(obj.timestamp_ms) as boolean
     )
 }
 
