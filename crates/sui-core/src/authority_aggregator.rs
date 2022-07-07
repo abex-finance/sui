@@ -358,11 +358,10 @@ where
         let mut candidate_source_authorties: HashSet<AuthorityName> = cert
             .certificate
             .auth_sign_info
-            .authorities(&self.committee)
-            .collect::<SuiResult<HashSet<_>>>()?
+            .signatures
             .iter()
-            .map(|&&name| name)
-            .collect::<HashSet<_>>();
+            .map(|(name, _)| *name)
+            .collect();
 
         // Sample a `retries` number of distinct authorities by stake.
         let mut source_authorities: Vec<AuthorityName> = Vec::new();
@@ -1112,8 +1111,7 @@ where
                                             self.committee.epoch(),
                                             transaction_ref.clone(),
                                             state.signatures.clone(),
-                                            &self.committee,
-                                        )?);
+                                        ));
                                 }
                             }
                             // If we get back an error, then we aggregate and check
@@ -1371,12 +1369,11 @@ where
                     good_stake = stake,
                     "Found an effect with good stake over threshold"
                 );
-                return CertifiedTransactionEffects::new(
+                return Ok(CertifiedTransactionEffects::new(
                     certificate.auth_sign_info.epoch,
                     effects,
                     signatures,
-                    &self.committee,
-                );
+                ));
             }
         }
 

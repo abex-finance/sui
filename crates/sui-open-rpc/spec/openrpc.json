@@ -1267,8 +1267,7 @@
         "type": "object",
         "required": [
           "epoch",
-          "signatures",
-          "signers_map"
+          "signatures"
         ],
         "properties": {
           "epoch": {
@@ -1279,11 +1278,18 @@
           "signatures": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AuthoritySignature"
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/components/schemas/PublicKeyBytes"
+                },
+                {
+                  "$ref": "#/components/schemas/AuthoritySignature"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
             }
-          },
-          "signers_map": {
-            "$ref": "#/components/schemas/Base64"
           }
         }
       },
@@ -2345,6 +2351,9 @@
             "additionalProperties": false
           }
         ]
+      },
+      "PublicKeyBytes": {
+        "$ref": "#/components/schemas/Base64"
       },
       "PublishResponse": {
         "type": "object",

@@ -68,10 +68,7 @@ fn make_cert(network_config: &NetworkConfig, tx: &Transaction) -> CertifiedTrans
             .key_pair();
         let pubx = secx.public_key_bytes();
         let sig = AuthoritySignature::new(&certificate.data, secx);
-        certificate
-            .auth_sign_info
-            .add_signature(sig, *pubx, &committee)
-            .unwrap();
+        certificate.auth_sign_info.signatures.push((*pubx, sig));
     }
     certificate
 }
