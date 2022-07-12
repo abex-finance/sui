@@ -40,6 +40,8 @@ export SUI_RPC_HOST=http://127.0.0.1:5001
 In the following sections we will show how to use Sui's JSON-RPC API with
 the `curl` command.
 
+> **Tip:** If your application is written in JavaScript or TypeScript, follow the [TypeScript SDK documentation](https://github.com/MystenLabs/sui/tree/main/sdk/typescript) and [reference files](https://www.npmjs.com/package/@mysten/sui.js).
+
 ## Sui JSON-RPC methods
 
 ### rpc.discover
@@ -299,4 +301,4 @@ Below you can see a truncated sample output of [sui_publish](#sui_publish). One 
 
 ## Connect to remote JSON-RPC server
 
-Coming soon - alternative ways of working with Sui's JSON-RPC API. Connect to Sui devnet, testnet, or mainnet!
+Coming soon - alternative ways of working with Sui's JSON-RPC API. Connect to Sui Devnet, Testnet, or Mainnet!
