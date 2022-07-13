@@ -139,9 +139,9 @@ function TableCard({
         <div className={styles.content}>
             <table className={styles.table}>
                 <thead>
-                    {table.getHeaderGroups().map((headerGroup) => (
+                    {table.getHeaderGroups().map((headerGroup: any) => (
                         <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
+                            {headerGroup.headers.map((header: any) => (
                                 <th
                                     key={header.id}
                                     colSpan={header.colSpan}
@@ -159,9 +159,9 @@ function TableCard({
                     ))}
                 </thead>
                 <tbody>
-                    {table.getRowModel().rows.map((row) => (
+                    {table.getRowModel().rows.map((row: any) => (
                         <tr key={row.id}>
-                            {row.getVisibleCells().map((cell) => (
+                            {row.getVisibleCells().map((cell: any) => (
                                 <td
                                     key={cell.id}
                                     className={styles.tablespacing}

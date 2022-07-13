@@ -4,6 +4,7 @@ import cl from 'classnames';
 import { useEffect, useState, useContext } from 'react';
 
 import ErrorResult from '../../components/error-result/ErrorResult';
+import { TopValidatorsCardAPI } from '../../components/top-validators-card/TopValidatorsCard';
 // import SuiNetworkStats from '../../components/network-stats/SuiNetworkStats';
 // import TopGroupsCard from '../../components/top-groups/TopGroups';
 // import TopValidatorsCard from '../../components/top-validators-card/TopValidatorsCard';
@@ -83,7 +84,9 @@ function HomeAPI() {
             <section className="left-item">
                 <LastestTxCard count={results.count} />
             </section>
-            <section className="right-item"></section>
+            <section className="right-item">
+                <TopValidatorsCardAPI/>
+            </section>
         </div>
     );
 }
