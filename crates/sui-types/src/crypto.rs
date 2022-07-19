@@ -305,7 +305,7 @@ impl PartialEq for AuthoritySignInfo {
 }
 
 impl AuthoritySignInfo {
-    pub fn add_to_verification_obligation<T>(
+    pub fn add_to_verification_obligation(
         &self,
         committee: &Committee,
         obligation: &mut VerificationObligation<AggregateAuthoritySignature>,
@@ -332,7 +332,10 @@ impl AuthoritySignInfo {
         T: Signable<Vec<u8>>,
     {
         let mut obligation = VerificationObligation::default();
-        self.add_to_verification_obligation(data, committee, &mut obligation)?;
+        let mut message = Vec::new();
+        data.write(&mut message);
+        let idx = obligation.add_message(message);
+        self.add_to_verification_obligation(committee, &mut obligation, idx)?;
         obligation.verify_all()?;
         Ok(())
     }
