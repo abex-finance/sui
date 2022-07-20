@@ -7,14 +7,16 @@ use move_core_types::{
     value::{MoveStructLayout, MoveTypeLayout},
     vm_status::AbortLocation,
 };
+use narwhal_crypto::ed25519::{Ed25519PublicKeyBytes, Ed25519PublicKey};
 use pretty_assertions::assert_str_eq;
+use serde::{Deserialize, Serialize};
 use serde_reflection::{Registry, Result, Samples, Tracer, TracerConfig};
 use signature::Signer;
 use std::{fs::File, io::Write};
 use sui_types::{
-    base_types::{self, ObjectDigest, ObjectID, TransactionDigest, TransactionEffectsDigest},
-    // batch::UpdateItem,
-    crypto::{get_key_pair, AuthoritySignature, KeypairTraits, PublicKeyBytes, Signature},
+    base_types::{self, ObjectDigest, ObjectID, TransactionDigest, TransactionEffectsDigest, ExecutionDigests, AuthorityName},
+    batch::{UpdateItem, SignedBatch, TxSequenceNumber, AuthorityBatch},
+    crypto::{get_key_pair, AuthoritySignature, KeypairTraits, PublicKeyBytes, Signature, PublicKey},
     messages::{
         CallArg, EntryArgumentErrorKind, ExecutionFailureStatus, ExecutionStatus, ObjectArg,
         ObjectInfoRequestKind, SingleTransactionKind, TransactionKind,
@@ -36,6 +38,7 @@ fn get_registry() -> Result<Registry> {
     tracer.trace_value(&mut samples, &addr)?;
     tracer.trace_value(&mut samples, &kp)?;
     tracer.trace_value(&mut samples, &pk)?;
+    tracer.trace_value(&mut samples, &kp.public())?;
 
     // We have two signature types: one for Authority Signatures, which don't include the PubKey ...
     let sig: AuthoritySignature = kp.sign(b"hello world");
@@ -58,6 +61,7 @@ fn get_registry() -> Result<Registry> {
     let teff = TransactionEffectsDigest::random();
     tracer.trace_value(&mut samples, &teff)?;
 
+
     // 2. Trace the main entry point(s) + every enum separately.
     tracer.trace_type::<Owner>(&samples)?;
     tracer.trace_type::<ExecutionStatus>(&samples)?;
@@ -75,7 +79,21 @@ fn get_registry() -> Result<Registry> {
     tracer.trace_type::<MoveStructLayout>(&samples)?;
     tracer.trace_type::<MoveTypeLayout>(&samples)?;
     tracer.trace_type::<base_types::SuiAddress>(&samples)?;
+
+    // // FAILURE HERE
     // tracer.trace_type::<UpdateItem>(&samples)?;
+
+    
+    // #[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
+    // pub enum Opdate {
+    //     Transaction(AuthorityName),
+    //     Botch(ExecutionDigests),
+    //     Bitch(AuthorityBatch),
+    //     Betch(AuthoritySignature)
+    // }
+
+    // tracer.trace_type::<Opdate>(&samples)?;
+    
 
     tracer.registry()
 }

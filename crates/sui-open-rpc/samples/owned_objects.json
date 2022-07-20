@@ -151,12 +151,6 @@
       "previousTransaction": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
     },
     {
-      "objectId": "0x6ecc2bc79d0d2729b3effae85891d4e0847d5ae5",
-      "version": 0,
-      "digest": "aCvTo2/XXkj+ENj2k2HdykFRAV3sRjwlHxBo6/hfpW0=",
-      "type": "0x2::coin::Coin<0x2::sui::SUI>",
-      "owner": {
-        "AddressOwner": "0x6b2ea8ccfd5ddfd9e8bd60ea02b8a95eb423c7b1"
       "objectId": "0xb511b36da6ad2cdf036e9f66d491ffdf8e5b2099",
       "version": 0,
       "digest": "wpb68LDF1D1IcIqb2MtlyVzrIHwF/SftWtNSzWh0Owk=",
@@ -167,12 +161,6 @@
       "previousTransaction": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
     },
     {
-      "objectId": "0x78d084333780c87c7b9d80cb16dcd1769783f7ad",
-      "version": 0,
-      "digest": "iUoL7BOaqTKtbrz5UhV38oU6NW2weqHTdsfP7sPGUhQ=",
-      "type": "0x2::coin::Coin<0x2::sui::SUI>",
-      "owner": {
-        "AddressOwner": "0x6b2ea8ccfd5ddfd9e8bd60ea02b8a95eb423c7b1"
       "objectId": "0xc90df6e2258bfc9457ac8d43f3ef5f99dc208274",
       "version": 0,
       "digest": "L1DJ4MTPO+PfovH8lDtW2vOvp83ji+DGMWWUdHX+lvM=",
