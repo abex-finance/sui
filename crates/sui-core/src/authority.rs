@@ -40,12 +40,12 @@ use sui_storage::{
     write_ahead_log::{DBTxGuard, TxGuard, WriteAheadLog},
     IndexStore,
 };
+use sui_types::crypto::AuthorityPublicKey;
 use sui_types::{
     base_types::*,
     batch::{TxSequenceNumber, UpdateItem},
     committee::Committee,
     crypto::AuthoritySignature,
-    crypto::PublicKey,
     error::{SuiError, SuiResult},
     fp_ensure,
     messages::*,
@@ -388,10 +388,12 @@ impl AuthorityState {
     ) -> Result<TransactionInfoResponse, SuiError> {
         self.metrics.tx_orders.inc();
         // Check the sender's signature.
-        transaction.verify().map_err(|e| {
-            self.metrics.signature_errors.inc();
-            e
-        })?;
+        if !transaction.data.kind.is_system_tx() {
+            transaction.verify().map_err(|e| {
+                self.metrics.signature_errors.inc();
+                e
+            })?;
+        }
         let transaction_digest = *transaction.digest();
 
         let response = self.handle_transaction_impl(transaction).await;
@@ -1497,7 +1499,7 @@ impl AuthorityState {
 
 #[async_trait]
 impl ExecutionState for AuthorityState {
-    type PubKey = PublicKey;
+    type PubKey = AuthorityPublicKey;
     type Transaction = ConsensusTransaction;
     type Error = SuiError;
     type Outcome = Vec<u8>;
@@ -1510,7 +1512,13 @@ impl ExecutionState for AuthorityState {
         _consensus_output: &narwhal_consensus::ConsensusOutput<Self::PubKey>,
         consensus_index: ExecutionIndices,
         transaction: Self::Transaction,
-    ) -> Result<(Self::Outcome, Option<narwhal_config::Committee<PublicKey>>), Self::Error> {
+    ) -> Result<
+        (
+            Self::Outcome,
+            Option<narwhal_config::Committee<Self::PubKey>>,
+        ),
+        Self::Error,
+    > {
         self.metrics.total_consensus_txns.inc();
         match transaction {
             ConsensusTransaction::UserTransaction(certificate) => {
