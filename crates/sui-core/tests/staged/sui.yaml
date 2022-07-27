@@ -75,8 +75,6 @@ Ed25519PublicKey:
   NEWTYPESTRUCT: STR
 Ed25519Signature:
   NEWTYPESTRUCT: BYTES
-Ed25519SuiSignature:
-  NEWTYPESTRUCT: BYTES
 EntryArgumentError:
   STRUCT:
     - argument_idx: U8
@@ -329,12 +327,6 @@ Owner:
       Immutable: UNIT
 SequenceNumber:
   NEWTYPESTRUCT: U64
-Signature:
-  ENUM:
-    0:
-      Ed25519SuiSignature:
-        NEWTYPE:
-          TYPENAME: Ed25519SuiSignature
 SignedBatch:
   STRUCT:
     - batch:
