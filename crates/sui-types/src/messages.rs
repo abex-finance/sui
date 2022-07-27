@@ -515,7 +515,7 @@ pub struct TransactionEnvelope<S> {
     pub data: TransactionData,
     /// tx_signature is signed by the transaction sender, applied on `data`.
     pub tx_signature: Signature,
-    /// authority signature information, if available, is signed by an authority, applied on `data`.
+    /// authority signature information, if available, is signed by an authority, applied on `tx_signature` || `data`.
     pub auth_sign_info: S,
     // Note: If any new field is added here, make sure the Hash and PartialEq
     // implementation are adjusted to include that new field (unless the new field
@@ -636,7 +636,7 @@ where
     }
 }
 
-// TODO: this should maybe be called ClientSignedTransaction + SignedTransaction -> AuthoritySignedTransaction
+// TODO: this should maybe be called ClientSignedTransaction + SignedTransaction -> AuthoritySignedTransaction.
 /// A transaction that is signed by a sender but not yet by an authority.
 pub type Transaction = TransactionEnvelope<EmptySignInfo>;
 
