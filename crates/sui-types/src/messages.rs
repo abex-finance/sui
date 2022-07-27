@@ -544,6 +544,9 @@ impl<S> TransactionEnvelope<S> {
     }
 
     pub fn verify_sender_signature(&self) -> SuiResult<()> {
+        if self.is_verified || self.data.kind.is_system_tx() {
+            return Ok(());
+        }
         self.tx_signature.verify(&self.data, self.data.sender)
     }
 

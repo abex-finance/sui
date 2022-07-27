@@ -388,12 +388,10 @@ impl AuthorityState {
     ) -> Result<TransactionInfoResponse, SuiError> {
         self.metrics.tx_orders.inc();
         // Check the sender's signature.
-        if !transaction.data.kind.is_system_tx() {
-            transaction.verify().map_err(|e| {
-                self.metrics.signature_errors.inc();
-                e
-            })?;
-        }
+        transaction.verify().map_err(|e| {
+            self.metrics.signature_errors.inc();
+            e
+        })?;
         let transaction_digest = *transaction.digest();
 
         let response = self.handle_transaction_impl(transaction).await;

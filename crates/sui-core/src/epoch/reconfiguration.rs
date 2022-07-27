@@ -163,8 +163,7 @@ where
                 },
                 Err(err) => err,
             };
-            warn!(
-                ?epoch,
+            println!(
                 "Error when processing advance epoch transaction: {:?}", err
             );
             tokio::time::sleep(WAIT_BETWEEN_EPOCH_TX_QUERY_RETRY).await;
