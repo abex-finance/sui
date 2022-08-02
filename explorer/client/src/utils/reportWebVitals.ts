@@ -9,8 +9,8 @@ enum ReportMethod {
 }
 
 let onPerfEntry: ReportHandler;
-if (process.env.REACT_APP_REPORT_VITALS === 'true') {
-    switch (process.env.REACT_APP_REPORT_VITALS_METHOD) {
+if (import.meta.env.REACT_APP_REPORT_VITALS === 'true') {
+    switch (import.meta.env.REACT_APP_REPORT_VITALS_METHOD) {
         case ReportMethod.console:
             // uncomment to see web vitals logs
             // onPerfEntry = console.log;

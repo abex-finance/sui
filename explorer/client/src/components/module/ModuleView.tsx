@@ -12,7 +12,7 @@ import styles from './ModuleView.module.css';
 // inclue Rust language.
 // @ts-ignore
 (typeof global !== 'undefined' ? global : window).Prism = Prism;
-require('prismjs/components/prism-rust');
+import('prismjs/components/prism-rust');
 
 function ModuleView({ itm }: { itm: any }) {
     return (
