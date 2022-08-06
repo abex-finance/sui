@@ -1,7 +1,9 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { timeAgo } from '../utils/timeUtils';
+import { describe, it, expect } from 'vitest';
+
+import { timeAgo } from '../timeUtils';
 
 const timeNow = 1735693990000;
 
