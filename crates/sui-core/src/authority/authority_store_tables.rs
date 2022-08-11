@@ -93,3 +93,11 @@ pub struct AuthorityStoreTables<S> {
     /// every message output by consensus (and in the right order).
     pub(crate) last_consensus_index: DBMap<u64, ExecutionIndices>,
 }
+
+impl<S> AuthorityStoreTables<S> {
+    pub fn get_memory_usage(&self) -> Result<(u64, u64), SuiError> {
+        let stats = rocksdb::perf::get_memory_usage_stats(Some(&[&self.effects.rocksdb]), None)
+            .map_err(|e| SuiError::GenericStorageError(e.to_string()))?;
+        Ok((stats.mem_table_total, stats.cache_total))
+    }
+}
