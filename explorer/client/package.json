@@ -69,12 +69,6 @@
         "lint": "yarn eslint:check && yarn prettier:check && yarn stylelint:check",
         "lint:fix": "yarn eslint:fix && yarn prettier:fix && yarn stylelint:fix"
     },
-    "resolutions": {
-        "async": "3.2.2",
-        "nth-check": "2.0.1",
-        "@types/react": "17.x",
-        "@types/react-dom": "17.x"
-    },
     "browserslist": {
         "production": [
             ">0.2%",
