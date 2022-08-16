@@ -1,7 +1,6 @@
 // Copyright (c) 2022, Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::keytool::read_authority_keypair_from_file;
 use crate::keytool::read_keypair_from_file;
 
 use super::write_keypair_to_file;
@@ -10,7 +9,6 @@ use sui_sdk::crypto::KeystoreType;
 use sui_types::base_types::SuiAddress;
 use sui_types::crypto::get_key_pair;
 use sui_types::crypto::Ed25519SuiSignature;
-use sui_types::crypto::KeypairTraits;
 use sui_types::crypto::Secp256k1SuiSignature;
 use sui_types::crypto::Signature;
 use sui_types::crypto::SuiKeyPair;
@@ -71,7 +69,6 @@ fn test_read_write_keystore_with_flag() {
     let kp_secp = SuiKeyPair::Secp256k1SuiKeyPair(get_key_pair().1);
     let addr_secp: SuiAddress = (&kp_secp.public()).into();
     let fp_secp = dir.path().join(format!("{}.key", addr_secp));
-    let fp_secp_2 = fp_secp.clone();
 
     // write Secp256k1 keypair to file
     let res = write_keypair_to_file(&kp_secp, &fp_secp);
@@ -87,15 +84,10 @@ fn test_read_write_keystore_with_flag() {
         kp_secp.public().as_ref()
     );
 
-    // read as AuthorityKeyPair fails
-    let kp_secp_read = read_authority_keypair_from_file(fp_secp_2);
-    assert!(kp_secp_read.is_err());
-
     // create Ed25519 keypair
     let kp_ed = SuiKeyPair::Ed25519SuiKeyPair(get_key_pair().1);
     let addr_ed: SuiAddress = (&kp_ed.public()).into();
     let fp_ed = dir.path().join(format!("{}.key", addr_ed));
-    let fp_ed_2 = fp_ed.clone();
 
     // write Ed25519 keypair to file
     let res = write_keypair_to_file(&kp_ed, &fp_ed);
@@ -106,16 +98,6 @@ fn test_read_write_keystore_with_flag() {
     assert!(kp_ed_read.is_ok());
 
     // KeyPair wrote into file is the same as read
-    assert_eq!(
-        kp_ed_read.unwrap().public().as_ref(),
-        kp_ed.public().as_ref()
-    );
-
-    // read from file as AuthorityKeyPair success
-    let kp_ed_read = read_authority_keypair_from_file(fp_ed_2);
-    assert!(kp_ed_read.is_ok());
-
-    // AuthorityKeyPair wrote into file is the same as read
     assert_eq!(
         kp_ed_read.unwrap().public().as_ref(),
         kp_ed.public().as_ref()

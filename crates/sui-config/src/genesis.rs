@@ -60,6 +60,7 @@ impl Genesis {
         )
     }
 
+    #[allow(clippy::mutable_key_type)]
     pub fn narwhal_committee(&self) -> narwhal_config::SharedCommittee {
         let narwhal_committee = self
             .validator_set

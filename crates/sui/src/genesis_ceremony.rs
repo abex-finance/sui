@@ -250,10 +250,10 @@ pub fn run(cmd: Ceremony) -> Result<()> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::keytool::write_keypair_to_file;
+    use crate::keytool::write_authority_keypair_to_file;
     use anyhow::Result;
     use sui_config::{utils, ValidatorInfo};
-    use sui_types::crypto::{get_key_pair_from_rng, AuthorityKeyPair, SuiKeyPair};
+    use sui_types::crypto::{get_key_pair_from_rng, AuthorityKeyPair};
 
     #[test]
     fn ceremony() -> Result<()> {
@@ -276,7 +276,7 @@ mod test {
                     narwhal_consensus_address: utils::new_network_address(),
                 };
                 let key_file = dir.path().join(format!("{}.key", info.name));
-                write_keypair_to_file(&SuiKeyPair::Ed25519SuiKeyPair(keypair), &key_file).unwrap();
+                write_authority_keypair_to_file(&keypair, &key_file).unwrap();
 
                 (key_file, info)
             })

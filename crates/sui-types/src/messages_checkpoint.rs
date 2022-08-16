@@ -123,6 +123,7 @@ pub struct CheckpointResponse {
     pub detail: Option<CheckpointContents>,
 }
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum AuthorityCheckpointInfo {
     AuthenticatedCheckpoint(Option<AuthenticatedCheckpoint>),

@@ -50,12 +50,12 @@ typed-store = { git = "https://github.com/MystenLabs/mysten-infra", rev = "8d090
 typed-store-macros = { git = "https://github.com/MystenLabs/mysten-infra", rev = "8d090689be14078f2ca41c356e7bbc0af21f73ab"} 
 mysten-network = { git = "https://github.com/MystenLabs/mysten-infra", rev = "8d090689be14078f2ca41c356e7bbc0af21f73ab" }
 
-narwhal-config = { git = "https://github.com/MystenLabs/narwhal", rev = "6a28e2ff64e4a567d7aee599c3774893598cb133", package = "config" }
-narwhal-consensus = { git = "https://github.com/MystenLabs/narwhal", rev = "6a28e2ff64e4a567d7aee599c3774893598cb133", package = "consensus" }
-narwhal-crypto = { git = "https://github.com/MystenLabs/narwhal", rev = "6a28e2ff64e4a567d7aee599c3774893598cb133", package = "crypto", features=["copy_key"]}
-narwhal-executor = { git = "https://github.com/MystenLabs/narwhal", rev = "6a28e2ff64e4a567d7aee599c3774893598cb133", package = "executor" }
-narwhal-types = { git = "https://github.com/MystenLabs/narwhal", rev = "6a28e2ff64e4a567d7aee599c3774893598cb133", package = "types" }
-narwhal-node = { git = "https://github.com/MystenLabs/narwhal", rev = "6a28e2ff64e4a567d7aee599c3774893598cb133", package = "node" }
+narwhal-config = { git = "https://github.com/punwai/narwhal-1", rev = "1b44f8ed0ebcd7033ba5b34cbde451d55aed065d", package = "config" }
+narwhal-consensus = { git = "https://github.com/punwai/narwhal-1", rev = "1b44f8ed0ebcd7033ba5b34cbde451d55aed065d", package = "consensus" }
+narwhal-crypto = { git = "https://github.com/punwai/narwhal-1", rev = "1b44f8ed0ebcd7033ba5b34cbde451d55aed065d", package = "crypto", features=["copy_key"]}
+narwhal-executor = { git = "https://github.com/punwai/narwhal-1", rev = "1b44f8ed0ebcd7033ba5b34cbde451d55aed065d", package = "executor" }
+narwhal-types = { git = "https://github.com/punwai/narwhal-1", rev = "1b44f8ed0ebcd7033ba5b34cbde451d55aed065d", package = "types" }
+narwhal-node = { git = "https://github.com/punwai/narwhal-1", rev = "1b44f8ed0ebcd7033ba5b34cbde451d55aed065d", package = "node" }
 workspace-hack = { path = "../workspace-hack"}
 thiserror = "1.0.32"
 eyre = "0.6.8"
