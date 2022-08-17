@@ -52,12 +52,12 @@ impl KeyToolCommand {
         match self {
             KeyToolCommand::Generate => {
                 // TODO: add flag to this command to enable generate Secp256k1 keypair
-                let (_address, keypair): (_, AccountKeyPair) = get_key_pair();
+                let (_address, keypair): (_, AuthorityKeyPair) = get_key_pair();
 
                 let hex = encode_bytes_hex(keypair.public());
                 let file_name = format!("{hex}.key");
-                write_keypair_to_file(&SuiKeyPair::Ed25519SuiKeyPair(keypair), &file_name)?;
-                println!("Ed25519 key generated and saved to '{file_name}'");
+                write_authority_keypair_to_file(&keypair, &file_name)?;
+                println!("Node key generated and saved to '{file_name}'");
             }
 
             KeyToolCommand::Show { file } => {
