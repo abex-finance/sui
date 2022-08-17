@@ -1,0 +1,259 @@
+---
+source: crates/sui-config/tests/snapshot_tests.rs
+assertion_line: 120
+expression: network_config
+---
+validator_configs:
+  - key-pair: Jm+XCP2NO0YrEM2/VJgHbAIes6z91Hyx/vZHln/hlPuMZtwsHqnlPwmFwXtOevGZErbTxA4MWSCloSUJtOs2GfXgfsVup38LMGKbocxy11sTlGB4Kl8OL4n7TEK0uKX649JgECIg5j0HVOfhhG3u/TmI6t5O038ThUN9Gd4aFhg=
+    db-path: /tmp/foo/
+    network-address: ""
+    json-rpc-address: "0.0.0.0:1"
+    websocket-address: ~
+    metrics-address: "0.0.0.0:1"
+    admin-interface-port: 8888
+    consensus-config:
+      consensus-address: ""
+      consensus-db-path: /tmp/foo/
+      narwhal-config:
+        header_size: 1000
+        max_header_delay: 100ms
+        gc_depth: 50
+        sync_retry_delay: 5000ms
+        sync_retry_nodes: 3
+        batch_size: 500000
+        max_batch_delay: 100ms
+        block_synchronizer:
+          certificates_synchronize_timeout: 2000ms
+          payload_synchronize_timeout: 2000ms
+          payload_availability_timeout: 2000ms
+          handler_certificate_deliver_timeout: 2000ms
+        consensus_api_grpc:
+          socket_addr: ""
+          get_collections_timeout: 5000ms
+          remove_collections_timeout: 5000ms
+        max_concurrent_requests: 500000
+        prometheus_metrics:
+          socket_addr: /ip4/127.0.0.1/tcp/1234
+    enable-event-processing: false
+    enable-gossip: true
+    enable-reconfig: false
+    genesis:
+      genesis: "[fake genesis]"
+  - key-pair: GmUrSDs4eIud+NXmdmLZos3nt4DX4JcIn4JZSg4gy0aBdGbZcLTVT5+dKb9vl5QNfyzlstOWcW8+r2b1NXXd2Nc8gOagFdHctNkjibH7jsIFGuReI5cDPx5vbmiufcuUbhx7iKgewLcb6uSscBKBim66ndtiqH1JYZavLNrpCPY=
+    db-path: /tmp/foo/
+    network-address: ""
+    json-rpc-address: "0.0.0.0:1"
+    websocket-address: ~
+    metrics-address: "0.0.0.0:1"
+    admin-interface-port: 8888
+    consensus-config:
+      consensus-address: ""
+      consensus-db-path: /tmp/foo/
+      narwhal-config:
+        header_size: 1000
+        max_header_delay: 100ms
+        gc_depth: 50
+        sync_retry_delay: 5000ms
+        sync_retry_nodes: 3
+        batch_size: 500000
+        max_batch_delay: 100ms
+        block_synchronizer:
+          certificates_synchronize_timeout: 2000ms
+          payload_synchronize_timeout: 2000ms
+          payload_availability_timeout: 2000ms
+          handler_certificate_deliver_timeout: 2000ms
+        consensus_api_grpc:
+          socket_addr: ""
+          get_collections_timeout: 5000ms
+          remove_collections_timeout: 5000ms
+        max_concurrent_requests: 500000
+        prometheus_metrics:
+          socket_addr: /ip4/127.0.0.1/tcp/1234
+    enable-event-processing: false
+    enable-gossip: true
+    enable-reconfig: false
+    genesis:
+      genesis: "[fake genesis]"
+  - key-pair: appZnjgUxfOgZBQl39Znqgs6ZucW1ill0PpZDe3C2gePN+vhcwDPBWtenrj1rAPcI4YRv/U/fq0RsOwe97fKQCAihS7kMygOAPAq8AbZcmMKTI7zMGF8Ys32Sx4jznlozDoy+AdHATCBDIzCpgkcKHzl4ZR5IykXnhNH0URqQ4k=
+    db-path: /tmp/foo/
+    network-address: ""
+    json-rpc-address: "0.0.0.0:1"
+    websocket-address: ~
+    metrics-address: "0.0.0.0:1"
+    admin-interface-port: 8888
+    consensus-config:
+      consensus-address: ""
+      consensus-db-path: /tmp/foo/
+      narwhal-config:
+        header_size: 1000
+        max_header_delay: 100ms
+        gc_depth: 50
+        sync_retry_delay: 5000ms
+        sync_retry_nodes: 3
+        batch_size: 500000
+        max_batch_delay: 100ms
+        block_synchronizer:
+          certificates_synchronize_timeout: 2000ms
+          payload_synchronize_timeout: 2000ms
+          payload_availability_timeout: 2000ms
+          handler_certificate_deliver_timeout: 2000ms
+        consensus_api_grpc:
+          socket_addr: ""
+          get_collections_timeout: 5000ms
+          remove_collections_timeout: 5000ms
+        max_concurrent_requests: 500000
+        prometheus_metrics:
+          socket_addr: /ip4/127.0.0.1/tcp/1234
+    enable-event-processing: false
+    enable-gossip: true
+    enable-reconfig: false
+    genesis:
+      genesis: "[fake genesis]"
+  - key-pair: BLnNjsQtTb1tm9wAGTF5GIo9uwZa6RHc1S7C5R+E002j0b5rOsxOAbvW6GkUe2JT6uPClYDmBvHGVZjnFfFrDpcTK1agDr7drZ1w4u9ckWgR9qXEtqHx8o2V/yUyxy1gkjxa7oDp+Cpiju0TpUpx+qLORrMmqxM3fPCvwjel9Fk=
+    db-path: /tmp/foo/
+    network-address: ""
+    json-rpc-address: "0.0.0.0:1"
+    websocket-address: ~
+    metrics-address: "0.0.0.0:1"
+    admin-interface-port: 8888
+    consensus-config:
+      consensus-address: ""
+      consensus-db-path: /tmp/foo/
+      narwhal-config:
+        header_size: 1000
+        max_header_delay: 100ms
+        gc_depth: 50
+        sync_retry_delay: 5000ms
+        sync_retry_nodes: 3
+        batch_size: 500000
+        max_batch_delay: 100ms
+        block_synchronizer:
+          certificates_synchronize_timeout: 2000ms
+          payload_synchronize_timeout: 2000ms
+          payload_availability_timeout: 2000ms
+          handler_certificate_deliver_timeout: 2000ms
+        consensus_api_grpc:
+          socket_addr: ""
+          get_collections_timeout: 5000ms
+          remove_collections_timeout: 5000ms
+        max_concurrent_requests: 500000
+        prometheus_metrics:
+          socket_addr: /ip4/127.0.0.1/tcp/1234
+    enable-event-processing: false
+    enable-gossip: true
+    enable-reconfig: false
+    genesis:
+      genesis: "[fake genesis]"
+  - key-pair: LqPR5IijTDFVFUq2rCvOsiIO8dIRuXSAldAP+DYC1me2tykqD8b9TR5r1KXG1tk5NzsUp1pV97mzqOf4RZiHOuHRbC/7MTIsXXZZqIJo6WQCoJQf//aqfEwxf5hNpYWpnuGovtGTaPGU7tq29e9O7GmsMIAVjtZZHy3ribwbBb8=
+    db-path: /tmp/foo/
+    network-address: ""
+    json-rpc-address: "0.0.0.0:1"
+    websocket-address: ~
+    metrics-address: "0.0.0.0:1"
+    admin-interface-port: 8888
+    consensus-config:
+      consensus-address: ""
+      consensus-db-path: /tmp/foo/
+      narwhal-config:
+        header_size: 1000
+        max_header_delay: 100ms
+        gc_depth: 50
+        sync_retry_delay: 5000ms
+        sync_retry_nodes: 3
+        batch_size: 500000
+        max_batch_delay: 100ms
+        block_synchronizer:
+          certificates_synchronize_timeout: 2000ms
+          payload_synchronize_timeout: 2000ms
+          payload_availability_timeout: 2000ms
+          handler_certificate_deliver_timeout: 2000ms
+        consensus_api_grpc:
+          socket_addr: ""
+          get_collections_timeout: 5000ms
+          remove_collections_timeout: 5000ms
+        max_concurrent_requests: 500000
+        prometheus_metrics:
+          socket_addr: /ip4/127.0.0.1/tcp/1234
+    enable-event-processing: false
+    enable-gossip: true
+    enable-reconfig: false
+    genesis:
+      genesis: "[fake genesis]"
+  - key-pair: OQUU4LiGZG3pVHcU4CGWoJI3hdiS5fWqF1cBKQLbKXiW5vCL1K0Ivt1NMW7dtXLJG2PiBBvMlKHa/bOOiMZa3P1Dxah/B34aXbRbG3vFSmYSEVJS+EVZe3uKiypPFyJTWNssHRT9V8/sttyjuXNYXY9s0/JzK2b945eBjfUf+X8=
+    db-path: /tmp/foo/
+    network-address: ""
+    json-rpc-address: "0.0.0.0:1"
+    websocket-address: ~
+    metrics-address: "0.0.0.0:1"
+    admin-interface-port: 8888
+    consensus-config:
+      consensus-address: ""
+      consensus-db-path: /tmp/foo/
+      narwhal-config:
+        header_size: 1000
+        max_header_delay: 100ms
+        gc_depth: 50
+        sync_retry_delay: 5000ms
+        sync_retry_nodes: 3
+        batch_size: 500000
+        max_batch_delay: 100ms
+        block_synchronizer:
+          certificates_synchronize_timeout: 2000ms
+          payload_synchronize_timeout: 2000ms
+          payload_availability_timeout: 2000ms
+          handler_certificate_deliver_timeout: 2000ms
+        consensus_api_grpc:
+          socket_addr: ""
+          get_collections_timeout: 5000ms
+          remove_collections_timeout: 5000ms
+        max_concurrent_requests: 500000
+        prometheus_metrics:
+          socket_addr: /ip4/127.0.0.1/tcp/1234
+    enable-event-processing: false
+    enable-gossip: true
+    enable-reconfig: false
+    genesis:
+      genesis: "[fake genesis]"
+  - key-pair: AsbjQQjedo3r19ZfnmH5hZgJYUN1BCfhVEH9G0fuytCV3z0uKMpX1FrpT+GSPo+dYqBwNtbgiAcDLWwc4uMc2/EsOgxBgmEMDnJvf6s4h9EGb3UE4rRpKUYS190Bk4Hlp/WR/FyJKufMMAcMrDV4Iyj3acwQdaPlukltKWfJJ/s=
+    db-path: /tmp/foo/
+    network-address: ""
+    json-rpc-address: "0.0.0.0:1"
+    websocket-address: ~
+    metrics-address: "0.0.0.0:1"
+    admin-interface-port: 8888
+    consensus-config:
+      consensus-address: ""
+      consensus-db-path: /tmp/foo/
+      narwhal-config:
+        header_size: 1000
+        max_header_delay: 100ms
+        gc_depth: 50
+        sync_retry_delay: 5000ms
+        sync_retry_nodes: 3
+        batch_size: 500000
+        max_batch_delay: 100ms
+        block_synchronizer:
+          certificates_synchronize_timeout: 2000ms
+          payload_synchronize_timeout: 2000ms
+          payload_availability_timeout: 2000ms
+          handler_certificate_deliver_timeout: 2000ms
+        consensus_api_grpc:
+          socket_addr: ""
+          get_collections_timeout: 5000ms
+          remove_collections_timeout: 5000ms
+        max_concurrent_requests: 500000
+        prometheus_metrics:
+          socket_addr: /ip4/127.0.0.1/tcp/1234
+    enable-event-processing: false
+    enable-gossip: true
+    enable-reconfig: false
+    genesis:
+      genesis: "[fake genesis]"
+account_keys:
+  - 0gL1Yotsq+ENWrgyROSyMO/U3MzvxGNYktNenctyJd+vtJBelVDPRiqCAHgkoFXZda6TRHDEd9ndu20rJkw2+g==
+  - 9Lcs30s8QZpYQnBLH+55QCOl6uAiOVb7LEcBbhB7hE6X5+2EP6saQs6cISlDUh7CKgJWh0fMADuIH70n9wvf4A==
+  - kYP0d2s+pZoXgeVko+rpZ2k5e4q0NbJd2kGJ4QPQMc9cR/734xE9wBxW701He/5RV6/DOWmgFPi7VTfhjM7GTA==
+  - nZTXHAccZRpZcVXhUvvQe7WAB32Ak1vyNmNCX/Kl8amDOdmcMzuzonf+t4C41GysMM3NkFDb4jX7jMZ7kcGwag==
+  - pzzqy7X725Nhn+RxRHmPNmU97IGS14ftQFbEczxPAHaGQZf0zFyrbI7dS3nEhe+5pVVxi3W2A+LouY9V7A3iZw==
+genesis: "[fake genesis]"
+
