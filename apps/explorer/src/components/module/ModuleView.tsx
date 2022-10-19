@@ -99,7 +99,8 @@ function ModuleView({ id, name, code }: Props) {
         <section className={styles.modulewrapper}>
             <div className={styles.moduletitle}>{name}</div>
             <div className={cl(codestyle.code, styles.codeview)}>
-                <Highlight
+                {code}
+                {/* <Highlight
                     {...defaultProps}
                     code={code}
                     language={'rust' as Language}
@@ -174,7 +175,7 @@ function ModuleView({ id, name, code }: Props) {
                             ))}
                         </pre>
                     )}
-                </Highlight>
+                </Highlight> */}
             </div>
         </section>
     );

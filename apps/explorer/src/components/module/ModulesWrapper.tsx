@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import Pagination from '../../components/pagination/Pagination';
@@ -9,27 +9,22 @@ import ModuleView from './ModuleView';
 
 import styles from './ModuleView.module.css';
 
-type Modules = {
-    title: string;
-    content: [moduleName: string, code: string][];
-};
-
 interface Props {
     id?: string;
-    data: Modules;
+    title: string;
+    modules: [moduleName: string, code: string][];
 }
 
 const MODULES_PER_PAGE = 3;
 // TODO: Include Pagination for now use viewMore and viewLess
-function ModuleViewWrapper({ id, data }: Props) {
+function ModuleViewWrapper({ id, title, modules }: Props) {
     const [searchParams] = useSearchParams();
     const [modulesPageNumber, setModulesPageNumber] = useState(1);
-    const totalModulesCount = data.content.length;
-    const numOfMudulesToShow = MODULES_PER_PAGE;
+    const totalModulesCount = modules.length;
 
     useEffect(() => {
         if (searchParams.get('module')) {
-            const moduleIndex = data.content.findIndex(([moduleName]) => {
+            const moduleIndex = modules.findIndex(([moduleName]) => {
                 return moduleName === searchParams.get('module');
             });
 
@@ -37,7 +32,7 @@ function ModuleViewWrapper({ id, data }: Props) {
                 Math.floor(moduleIndex / MODULES_PER_PAGE) + 1
             );
         }
-    }, [searchParams, data.content]);
+    }, [searchParams, modules]);
 
     const stats = {
         stats_text: 'total modules',
@@ -46,23 +41,23 @@ function ModuleViewWrapper({ id, data }: Props) {
 
     return (
         <div className={styles.modulewraper}>
-            <h3 className={styles.title}>{data.title}</h3>
+            <h3 className={styles.title}>{title}</h3>
             <div className={styles.module}>
-                {data.content
+                {modules
                     .filter(
                         (_, index) =>
                             index >=
-                                (modulesPageNumber - 1) * numOfMudulesToShow &&
-                            index < modulesPageNumber * numOfMudulesToShow
+                                (modulesPageNumber - 1) * MODULES_PER_PAGE &&
+                            index < modulesPageNumber * MODULES_PER_PAGE
                     )
                     .map(([name, code], idx) => (
                         <ModuleView key={idx} id={id} name={name} code={code} />
                     ))}
             </div>
-            {totalModulesCount > numOfMudulesToShow && (
+            {totalModulesCount > MODULES_PER_PAGE && (
                 <Pagination
                     totalItems={totalModulesCount}
-                    itemsPerPage={numOfMudulesToShow}
+                    itemsPerPage={MODULES_PER_PAGE}
                     currentPage={modulesPageNumber}
                     onPagiChangeFn={setModulesPageNumber}
                     stats={stats}
@@ -71,4 +66,5 @@ function ModuleViewWrapper({ id, data }: Props) {
         </div>
     );
 }
-export default ModuleViewWrapper;
+
+export default memo(ModuleViewWrapper);

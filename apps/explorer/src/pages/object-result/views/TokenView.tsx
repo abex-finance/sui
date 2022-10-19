@@ -1,7 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { ReactComponent as PreviewMediaIcon } from '../../../assets/SVGIcons/preview-media.svg';
@@ -39,16 +39,20 @@ function TokenView({ data }: { data: DataType }) {
         ([key, value]) => key !== 'name' && checkIsPropertyType(value)
     );
 
-    const structProperties = Object.entries(viewedData.data?.contents).filter(
-        ([key, value]) => typeof value == 'object' && key !== 'id'
+    const structProperties = useMemo(
+        () =>
+            Object.entries(viewedData.data?.contents).filter(
+                ([key, value]) => typeof value == 'object' && key !== 'id'
+            ),
+        [viewedData.data]
     );
 
-    let structPropertiesDisplay: any[] = [];
-    if (structProperties.length > 0) {
-        structPropertiesDisplay = Object.values(structProperties).map(
-            ([x, y]) => [x, JSON.stringify(y, null, 2)]
+    const structPropertiesDisplay = useMemo(() => {
+        if (!structProperties.length) return [];
+        return Object.values(structProperties).map(
+            ([x, y]) => [x, JSON.stringify(y, null, 2)] as [string, string]
         );
-    }
+    }, [structProperties]);
 
     const [fileType, setFileType] = useState<undefined | string>(undefined);
 
@@ -206,12 +210,7 @@ function TokenView({ data }: { data: DataType }) {
                 </>
             )}
             {structProperties.length > 0 && (
-                <ModulesWrapper
-                    data={{
-                        title: '',
-                        content: structPropertiesDisplay,
-                    }}
-                />
+                <ModulesWrapper title="" modules={structPropertiesDisplay} />
             )}
             <h2 className={styles.header}>Child Objects</h2>
             <div className={styles.ownedobjects}>

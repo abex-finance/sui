@@ -85,10 +85,8 @@ function PkgView({ data }: { data: DataType }) {
 
                 <ModulesWrapper
                     id={data.id}
-                    data={{
-                        title: 'Modules',
-                        content: properties,
-                    }}
+                    title="Modules"
+                    modules={properties}
                 />
                 <div className={styles.txsection}>
                     <h2 className={styles.header}>Transactions </h2>

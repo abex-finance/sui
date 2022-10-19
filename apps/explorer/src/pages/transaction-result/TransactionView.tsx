@@ -380,10 +380,7 @@ function TransactionView({ txdata }: { txdata: DataType }) {
 
     const modules =
         txKindData?.module?.value && Array.isArray(txKindData?.module?.value)
-            ? {
-                  title: 'Modules',
-                  content: txKindData?.module?.value,
-              }
+            ? txKindData?.module?.value
             : false;
 
     const hasEvents = txEventData && txEventData.length > 0;
@@ -456,7 +453,8 @@ function TransactionView({ txdata }: { txdata: DataType }) {
                                 >
                                     <ModulesWrapper
                                         id={txKindData.objectId?.value}
-                                        data={modules}
+                                        title="Modules"
+                                        modules={modules}
                                     />
                                 </section>
                             )}
