@@ -10218,14 +10218,17 @@ checksum = "0685c84d5d54d1c26f7d3eb96cd41550adb97baed141a761cf335d3d33bcd0ae"
 name = "typed-store"
 version = "0.4.0"
 dependencies = [
+ "async-trait",
  "bincode",
  "collectable",
  "eyre",
  "fdlimit",
  "once_cell",
+ "ouroboros 0.15.5",
  "proc-macro2 1.0.47",
  "prometheus",
  "quote 1.0.21",
+ "rand 0.8.5",
  "rocksdb",
  "serde 1.0.147",
  "syn 1.0.103",
