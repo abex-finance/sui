@@ -219,7 +219,7 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getMoveFunctionArgTypes',
         [packageId, moduleName, functionName],
-        isSuiMoveFunctionArgTypes,
+        SuiMoveFunctionArgTypes,
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -237,7 +237,8 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getNormalizedMoveModulesByPackage',
         [packageId],
-        isSuiMoveNormalizedModules,
+        // isSuiMoveNormalizedModules,
+        any(),
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -256,7 +257,8 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getNormalizedMoveModule',
         [packageId, moduleName],
-        isSuiMoveNormalizedModule,
+        // isSuiMoveNormalizedModule,
+        any(),
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -276,7 +278,8 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getNormalizedMoveFunction',
         [packageId, moduleName, functionName],
-        isSuiMoveNormalizedFunction,
+        // isSuiMoveNormalizedFunction,
+        any(),
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -295,7 +298,8 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getNormalizedMoveStruct',
         [packageId, moduleName, structName],
-        isSuiMoveNormalizedStruct,
+        // isSuiMoveNormalizedStruct,
+        any(),
         this.options.skipDataValidation
       );
     } catch (err) {

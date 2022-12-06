@@ -1,10 +1,10 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import { isTransactionEffects } from './index.guard';
 import { SuiEvent } from './events';
 import { SuiMovePackage, SuiObject, SuiObjectRef } from './objects';
 import {
+  is,
   array,
   Infer,
   literal,
@@ -246,11 +246,11 @@ export type TransactionQuery =
 export type EmptySignInfo = object;
 export type AuthorityName = string;
 
-export type TransactionBytes = {
-  txBytes: string;
-  gas: SuiObjectRef;
+export const TransactionBytes = object({
+  txBytes: string(),
+  gas: SuiObjectRef,
   // TODO: Add input_objects field
-};
+});
 
 export const SuiParsedMergeCoinResponse = object({
   updatedCoin: SuiObject,
@@ -456,7 +456,7 @@ export function getExecutionStatusGasSummary(
     | SuiExecuteTransactionResponse
     | TransactionEffects
 ): GasCostSummary | undefined {
-  if (isTransactionEffects(data)) {
+  if (is(data, TransactionEffects)) {
     return data.gasUsed;
   }
   return getTransactionEffects(data)?.gasUsed;
