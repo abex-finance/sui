@@ -5,6 +5,7 @@ import RpcClient from 'jayson/lib/client/browser/index.js';
 import fetch from 'cross-fetch';
 import { isErrorResponse, isValidResponse } from './client.guard';
 import * as LosslessJSON from 'lossless-json';
+import { Infer, is, Struct } from 'superstruct';
 
 /**
  * An object defining headers to be passed to the RPC server
@@ -98,14 +99,15 @@ export class JsonRpcClient {
   async requestWithType<T>(
     method: string,
     args: Array<any>,
-    isT: (val: any) => val is T,
+    struct: Struct<T>,
     skipDataValidation: boolean = false
   ): Promise<T> {
     const response = await this.request(method, args);
     if (isErrorResponse(response)) {
       throw new Error(`RPC Error: ${response.error.message}`);
     } else if (isValidResponse(response)) {
-      const expectedSchema = isT(response.result);
+      // TODO: Improve error messaging here using superstruct asserts
+      const expectedSchema = is(response.result, struct);
       const errMsg =
         TYPE_MISMATCH_ERROR +
         `Result received was: ${JSON.stringify(response.result)}`;
