@@ -45,6 +45,7 @@ import {
   normalizeSuiObjectId,
   SuiTransactionAuthSignersResponse,
   CoinMetadataStruct,
+  GetObjectDataResponseStruct,
 } from '../types';
 import {
   PublicKey,
@@ -398,7 +399,7 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getObject',
         [objectId],
-        isGetObjectDataResponse,
+        GetObjectDataResponseStruct,
         this.options.skipDataValidation
       );
     } catch (err) {
