@@ -218,7 +218,8 @@ export type SuiExecuteTransactionResponse = Infer<
 
 export type GatewayTxSeqNumber = number;
 
-export type GetTxnDigestsResponse = TransactionDigest[];
+export const GetTxnDigestsResponse = array(TransactionDigest);
+export type GetTxnDigestsResponse = Infer<typeof GetTxnDigestsResponse>;
 
 export const PaginatedTransactionDigests = object({
   data: array(TransactionDigest),
