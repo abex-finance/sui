@@ -425,7 +425,7 @@ export class JsonRpcProvider extends Provider {
       });
       return await this.client.batchRequestWithType(
         requests,
-        isGetObjectDataResponse,
+        GetObjectDataResponseStruct,
         this.options.skipDataValidation
       );
     } catch (err) {
