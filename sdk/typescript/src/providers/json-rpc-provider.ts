@@ -7,7 +7,6 @@ import {
   Coin,
   ExecuteTransactionRequestType,
   GatewayTxSeqNumber,
-  GetObjectDataResponse,
   getObjectReference,
   GetTxnDigestsResponse,
   ObjectId,
@@ -45,7 +44,7 @@ import {
   normalizeSuiObjectId,
   SuiTransactionAuthSignersResponse,
   CoinMetadataStruct,
-  GetObjectDataResponseStruct,
+  GetObjectDataResponse,
 } from '../types';
 import {
   PublicKey,
@@ -399,7 +398,7 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getObject',
         [objectId],
-        GetObjectDataResponseStruct,
+        GetObjectDataResponse,
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -425,7 +424,7 @@ export class JsonRpcProvider extends Provider {
       });
       return await this.client.batchRequestWithType(
         requests,
-        GetObjectDataResponseStruct,
+        GetObjectDataResponse,
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -444,7 +443,7 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getTransactions',
         [query, cursor, limit, order === 'descending'],
-        isPaginatedTransactionDigests,
+        PaginatedTransactionDigests,
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -475,7 +474,7 @@ export class JsonRpcProvider extends Provider {
       }
       const results = await this.client.batchRequestWithType(
         requests,
-        isPaginatedTransactionDigests,
+        PaginatedTransactionDigests,
         this.options.skipDataValidation
       );
       return [...results[0].data, ...results[1].data];
@@ -506,7 +505,7 @@ export class JsonRpcProvider extends Provider {
       }
       const results = await this.client.batchRequestWithType(
         requests,
-        isPaginatedTransactionDigests,
+        PaginatedTransactionDigests,
         this.options.skipDataValidation
       );
       return [...results[0].data, ...results[1].data];
@@ -527,7 +526,7 @@ export class JsonRpcProvider extends Provider {
       const resp = await this.client.requestWithType(
         'sui_getTransaction',
         [digest],
-        isSuiTransactionResponse,
+        SuiTransactionResponse,
         this.options.skipDataValidation
       );
       return resp;
@@ -553,7 +552,7 @@ export class JsonRpcProvider extends Provider {
       });
       return await this.client.batchRequestWithType(
         requests,
-        isSuiTransactionResponse,
+        SuiTransactionResponse,
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -583,7 +582,7 @@ export class JsonRpcProvider extends Provider {
             pubkey.toString(),
             requestType,
           ],
-          isSuiExecuteTransactionResponse,
+          SuiExecuteTransactionResponse,
           this.options.skipDataValidation
         );
       } else {
@@ -602,7 +601,7 @@ export class JsonRpcProvider extends Provider {
             new Base64DataBuffer(serialized_sig).toString(),
             requestType,
           ],
-          isSuiExecuteTransactionResponse,
+          SuiExecuteTransactionResponse,
           this.options.skipDataValidation
         );
       }
@@ -672,7 +671,7 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getEvents',
         [query, cursor, limit, order === 'descending'],
-        isPaginatedEvents,
+        PaginatedEvents,
         this.options.skipDataValidation
       );
     } catch (err) {
@@ -698,7 +697,7 @@ export class JsonRpcProvider extends Provider {
       const resp = await this.client.requestWithType(
         'sui_dryRunTransaction',
         [txBytes],
-        isTransactionEffects,
+        TransactionEffects,
         this.options.skipDataValidation
       );
       return resp;
