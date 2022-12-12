@@ -12,8 +12,9 @@ import { Banner } from '~/ui/Banner';
 import { AddressLink } from '~/ui/InternalLink';
 import { Link } from '~/ui/Link';
 import { PlaceholderTable } from '~/ui/PlaceholderTable';
-import { TableCard } from '~/ui/TableCard';
 import { Text } from '~/ui/Text';
+import { Table } from '~/ui/Table';
+import { createColumnHelper } from '@tanstack/react-table';
 
 const VALIDATORS_OBJECT_ID = '0x05';
 const NUMBER_OF_VALIDATORS = 10;
@@ -129,6 +130,21 @@ function StakeColumn(prop: { stake: bigint; stakePercent: number }) {
     );
 }
 
+function getName(name: string | number[]) {
+    if (Array.isArray(name)) {
+        return String.fromCharCode(...name);
+    }
+
+    const decodedName = textDecoder.decode(
+        new Base64DataBuffer(name).getData()
+    );
+    if (!VALDIATOR_NAME.test(decodedName)) {
+        return name;
+    } else {
+        return decodedName;
+    }
+}
+
 export function processValidators(set: Validator[], totalStake: bigint) {
     return set.map((av) => {
         let name: string;
@@ -156,6 +172,58 @@ export const getStakePercent = (stake: bigint, total: bigint): number => {
     const bnTotal = new BigNumber(total.toString());
     return bnStake.div(bnTotal).multipliedBy(100).toNumber();
 };
+
+const columnHelper = createColumnHelper<Validator>();
+
+const columns = [
+    columnHelper.accessor('fields.metadata.fields.name', {
+        header: 'Name',
+        cell: (info) => (
+            <Text variant="bodySmall" color="steel-darker" weight="medium">
+                {getName(info.getValue())}
+            </Text>
+        ),
+    }),
+    columnHelper.accessor('fields.metadata.fields.sui_address', {
+        header: 'Address',
+        cell: (info) => (
+            // TODO: Truncate:
+            <AddressLink address={info.getValue()} noTruncate={false} />
+        ),
+    }),
+    columnHelper.accessor('fields', {
+        header: 'Stake',
+        cell: (info) => (
+            <StakeColumn
+                stake={info.getValue().stake_amount}
+                stakePercent={0}
+            />
+        ),
+    }),
+    // columnHelper.accessor((row) => row.lastName, {
+    //     id: 'lastName',
+    //     cell: (info) => <i>{info.getValue()}</i>,
+    //     header: () => <span>Last Name</span>,
+    //     footer: (info) => info.column.id,
+    // }),
+    // columnHelper.accessor('age', {
+    //     header: () => 'Age',
+    //     cell: (info) => info.renderValue(),
+    //     footer: (info) => info.column.id,
+    // }),
+    // columnHelper.accessor('visits', {
+    //     header: () => <span>Visits</span>,
+    //     footer: (info) => info.column.id,
+    // }),
+    // columnHelper.accessor('status', {
+    //     header: 'Status',
+    //     footer: (info) => info.column.id,
+    // }),
+    // columnHelper.accessor('progress', {
+    //     header: 'Profile Progress',
+    //     footer: (info) => info.column.id,
+    // }),
+];
 
 const validatorsTable = (validatorsData: ValidatorState, limit?: number) => {
     const totalStake = validatorsData.validators.fields.total_validator_stake;
@@ -250,10 +318,13 @@ export function TopValidatorsCard({ limit }: { limit?: number }) {
 
             {isSuccess && tableData && (
                 <>
-                    <TableCard
-                        data={tableData.data}
-                        columns={tableData.columns}
+                    <Table
+                        data={
+                            validatorData!.validators.fields.active_validators
+                        }
+                        columns={columns}
                     />
+
                     {limit && (
                         <div className="mt-3">
                             <Link to="/validators">
