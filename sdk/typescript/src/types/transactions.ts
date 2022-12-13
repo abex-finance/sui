@@ -189,9 +189,12 @@ export const TransactionEffects = object({
 });
 export type TransactionEffects = Infer<typeof TransactionEffects>;
 
-export type SuiTransactionAuthSignersResponse = {
-  signers: AuthorityName[]
-};
+export const SuiTransactionAuthSignersResponse = object({
+  signers: array(string()),
+});
+export type SuiTransactionAuthSignersResponse = Infer<
+  typeof SuiTransactionAuthSignersResponse
+>;
 
 // TODO: this is likely to go away after https://github.com/MystenLabs/sui/issues/4207
 export const SuiCertifiedTransactionEffects = object({

@@ -310,7 +310,9 @@ export class JsonRpcProvider extends Provider {
   }
 
   // Objects
-  async getObjectsOwnedByAddress(address: SuiAddress): Promise<SuiObjectInfo[]> {
+  async getObjectsOwnedByAddress(
+    address: SuiAddress
+  ): Promise<SuiObjectInfo[]> {
     try {
       if (!address || !isValidSuiAddress(normalizeSuiAddress(address))) {
         throw new Error('Invalid Sui address');
@@ -328,7 +330,9 @@ export class JsonRpcProvider extends Provider {
     }
   }
 
-  async getGasObjectsOwnedByAddress(address: SuiAddress): Promise<SuiObjectInfo[]> {
+  async getGasObjectsOwnedByAddress(
+    address: SuiAddress
+  ): Promise<SuiObjectInfo[]> {
     const objects = await this.getObjectsOwnedByAddress(address);
     return objects.filter((obj: SuiObjectInfo) => Coin.isSUI(obj));
   }
@@ -416,7 +420,9 @@ export class JsonRpcProvider extends Provider {
     return getObjectReference(resp);
   }
 
-  async getObjectBatch(objectIds: ObjectId[]): Promise<GetObjectDataResponse[]> {
+  async getObjectBatch(
+    objectIds: ObjectId[]
+  ): Promise<GetObjectDataResponse[]> {
     try {
       const requests = objectIds.map((id) => {
         if (!id || !isValidSuiObjectId(normalizeSuiObjectId(id))) {
@@ -433,7 +439,9 @@ export class JsonRpcProvider extends Provider {
         this.options.skipDataValidation
       );
     } catch (err) {
-      throw new Error(`Error fetching object info: ${err} for ids [${objectIds}]`);
+      throw new Error(
+        `Error fetching object info: ${err} for ids [${objectIds}]`
+      );
     }
   }
 
@@ -525,7 +533,7 @@ export class JsonRpcProvider extends Provider {
     digest: TransactionDigest
   ): Promise<SuiTransactionResponse> {
     try {
-      if (!isValidTransactionDigest(digest, "base58")) {
+      if (!isValidTransactionDigest(digest, 'base58')) {
         throw new Error('Invalid Transaction digest');
       }
       const resp = await this.client.requestWithType(
@@ -547,7 +555,7 @@ export class JsonRpcProvider extends Provider {
   ): Promise<SuiTransactionResponse[]> {
     try {
       const requests = digests.map((d) => {
-        if (!isValidTransactionDigest(d, "base58")) {
+        if (!isValidTransactionDigest(d, 'base58')) {
           throw new Error(`Invalid Transaction digest ${d}`);
         }
         return {
@@ -655,13 +663,11 @@ export class JsonRpcProvider extends Provider {
       return await this.client.requestWithType(
         'sui_getTransactionAuthSigners',
         [digest],
-        isSuiTransactionAuthSignersResponse,
+        SuiTransactionAuthSignersResponse,
         this.options.skipDataValidation
       );
     } catch (err) {
-      throw new Error(
-        `Error fetching transaction auth signers: ${err}`
-      );
+      throw new Error(`Error fetching transaction auth signers: ${err}`);
     }
   }
 
