@@ -59,6 +59,7 @@ impl CoinReadApi {
     fn get_owner_coin_iterator<'a>(
         &'a self,
         owner: SuiAddress,
+        // TODO: update the type to be `StructTag` instead of String
         coin_type: &'a Option<String>,
     ) -> Result<impl Iterator<Item = ObjectID> + '_, Error> {
         Ok(self
@@ -118,10 +119,14 @@ impl CoinReadApiServer for CoinReadApi {
         cursor: Option<ObjectID>,
         limit: Option<usize>,
     ) -> RpcResult<CoinPage> {
+        let mut parsed_coin_type = None;
+        if let Some(v) = coin_type {
+            parsed_coin_type = Some(parse_sui_struct_tag(&v)?.to_canonical_string());
+        }
         // TODO: Add index to improve performance?
         let limit = cap_page_limit(limit)?;
         let mut coins = self
-            .get_owner_coin_iterator(owner, &coin_type)?
+            .get_owner_coin_iterator(owner, &parsed_coin_type)?
             .skip_while(|o| matches!(&cursor, Some(cursor) if cursor != o))
             .take(limit + 1)
             .collect::<Vec<_>>();
@@ -152,7 +157,11 @@ impl CoinReadApiServer for CoinReadApi {
         coin_type: Option<String>,
     ) -> RpcResult<Vec<Balance>> {
         // TODO: Add index to improve performance?
-        let coins = self.get_owner_coin_iterator(owner, &coin_type)?;
+        let mut parsed_coin_type = None;
+        if let Some(v) = coin_type {
+            parsed_coin_type = Some(parse_sui_struct_tag(&v)?.to_canonical_string());
+        }
+        let coins = self.get_owner_coin_iterator(owner, &parsed_coin_type)?;
         let mut data: HashMap<String, (u128, usize)> = HashMap::new();
 
         for coin in coins {
@@ -231,7 +240,7 @@ impl CoinReadApiServer for CoinReadApi {
 fn is_coin_type(type_: &StructTag, coin_type: &Option<String>) -> bool {
     if Coin::is_coin(type_) {
         return if let Some(coin_type) = coin_type {
-            matches!(type_.type_params.first(), Some(TypeTag::Struct(type_)) if &type_.to_string() == coin_type)
+            matches!(type_.type_params.first(), Some(TypeTag::Struct(type_)) if &type_.to_canonical_string() == coin_type)
         } else {
             true
         };

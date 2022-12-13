@@ -444,7 +444,7 @@ impl Event {
     /// "0x2::devnet_nft::MintNFTEvent"
     pub fn move_event_name(&self) -> Option<String> {
         if let Event::MoveEvent { type_, .. } = self {
-            Some(type_.to_string())
+            Some(type_.to_canonical_string())
         } else {
             None
         }

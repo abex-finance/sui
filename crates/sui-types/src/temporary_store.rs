@@ -283,7 +283,7 @@ impl<S> TemporaryStore<S> {
                         &ctx,
                         obj.owner,
                         // Safe to unwrap, package cannot mutate
-                        obj.data.type_().unwrap().to_string(),
+                        obj.data.type_().unwrap().to_canonical_string(),
                         obj.id(),
                         obj.version(),
                     ));
@@ -294,7 +294,7 @@ impl<S> TemporaryStore<S> {
                         package_id: ctx.package_id,
                         transaction_module: ctx.transaction_module,
                         sender: ctx.sender,
-                        object_type: obj.data.type_().unwrap().to_string(),
+                        object_type: obj.data.type_().unwrap().to_canonical_string(),
                         object_id: obj.id(),
                         version: obj.version(),
                     });
@@ -312,7 +312,7 @@ impl<S> TemporaryStore<S> {
                     Event::new_object(
                         &ctx,
                         obj.owner,
-                        obj.type_().unwrap().to_string(),
+                        obj.type_().unwrap().to_canonical_string(),
                         id,
                         obj.version(),
                     )

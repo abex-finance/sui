@@ -1969,6 +1969,7 @@ impl AuthorityState {
                     .await?
             }
             EventQuery::MoveEvent(struct_name) => {
+                // TODO: sanitize `struct_name` here
                 es.events_by_move_event_struct_name(&struct_name, cursor, limit, descending)
                     .await?
             }
