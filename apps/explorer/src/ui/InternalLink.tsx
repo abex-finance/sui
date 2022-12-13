@@ -3,31 +3,50 @@
 
 import { formatAddress } from '../utils/stringUtils';
 
-import { Link } from '~/ui/Link';
+import { Link, type LinkProps } from '~/ui/Link';
 
-export type AddressLinkProps = {
+type BaseProps = Omit<LinkProps, 'children'>;
+
+export interface AddressLinkProps extends BaseProps {
     address: string;
     noTruncate?: boolean;
-};
+}
 
-export type ObjectLinkProps = {
+export interface ObjectLinkProps extends BaseProps {
     objectId: string;
     noTruncate?: boolean;
-};
+}
 
-export function AddressLink({ address, noTruncate }: AddressLinkProps) {
+export function AddressLink({
+    address,
+    noTruncate,
+    ...props
+}: AddressLinkProps) {
     const truncatedAddress = noTruncate ? address : formatAddress(address);
+
     return (
-        <Link variant="mono" to={`/address/${encodeURIComponent(address)}`}>
+        <Link
+            variant="mono"
+            to={`/address/${encodeURIComponent(address)}`}
+            {...props}
+        >
             {truncatedAddress}
         </Link>
     );
 }
 
-export function ObjectLink({ objectId, noTruncate }: ObjectLinkProps) {
+export function ObjectLink({
+    objectId,
+    noTruncate,
+    ...props
+}: ObjectLinkProps) {
     const truncatedObjectId = noTruncate ? objectId : formatAddress(objectId);
     return (
-        <Link variant="mono" to={`/object/${encodeURIComponent(objectId)}`}>
+        <Link
+            variant="mono"
+            to={`/object/${encodeURIComponent(objectId)}`}
+            {...props}
+        >
             {truncatedObjectId}
         </Link>
     );

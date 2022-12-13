@@ -178,11 +178,7 @@ const columnHelper = createColumnHelper<Validator>();
 const columns = [
     columnHelper.accessor('fields.metadata.fields.name', {
         header: 'Name',
-        cell: (info) => (
-            <Text variant="bodySmall" color="steel-darker" weight="medium">
-                {getName(info.getValue())}
-            </Text>
-        ),
+        cell: (info) => getName(info.getValue()),
     }),
     columnHelper.accessor('fields.metadata.fields.sui_address', {
         header: 'Address',
@@ -200,29 +196,6 @@ const columns = [
             />
         ),
     }),
-    // columnHelper.accessor((row) => row.lastName, {
-    //     id: 'lastName',
-    //     cell: (info) => <i>{info.getValue()}</i>,
-    //     header: () => <span>Last Name</span>,
-    //     footer: (info) => info.column.id,
-    // }),
-    // columnHelper.accessor('age', {
-    //     header: () => 'Age',
-    //     cell: (info) => info.renderValue(),
-    //     footer: (info) => info.column.id,
-    // }),
-    // columnHelper.accessor('visits', {
-    //     header: () => <span>Visits</span>,
-    //     footer: (info) => info.column.id,
-    // }),
-    // columnHelper.accessor('status', {
-    //     header: 'Status',
-    //     footer: (info) => info.column.id,
-    // }),
-    // columnHelper.accessor('progress', {
-    //     header: 'Profile Progress',
-    //     footer: (info) => info.column.id,
-    // }),
 ];
 
 const validatorsTable = (validatorsData: ValidatorState, limit?: number) => {
@@ -292,12 +265,10 @@ export function TopValidatorsCard({ limit }: { limit?: number }) {
             ? (data.details.data.fields as ValidatorState)
             : null;
 
-    const tableData = useMemo(
-        () => (validatorData ? validatorsTable(validatorData, limit) : null),
-        [validatorData, limit]
-    );
+    const activeValidators =
+        validatorData?.validators.fields.active_validators.slice(0, limit);
 
-    if (isError || (!isLoading && !tableData?.data.length)) {
+    if (isError || (!isLoading && !activeValidators?.length)) {
         return (
             <Banner variant="error" fullWidth>
                 Validator data could not be loaded
@@ -316,14 +287,9 @@ export function TopValidatorsCard({ limit }: { limit?: number }) {
                 />
             )}
 
-            {isSuccess && tableData && (
+            {isSuccess && activeValidators && (
                 <>
-                    <Table
-                        data={
-                            validatorData!.validators.fields.active_validators
-                        }
-                        columns={columns}
-                    />
+                    <Table data={activeValidators} columns={columns} />
 
                     {limit && (
                         <div className="mt-3">

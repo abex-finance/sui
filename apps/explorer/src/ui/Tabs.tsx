@@ -17,7 +17,7 @@ export const TabPanels = HeadlessTab.Panels;
 export type TabPanelProps = ExtractProps<typeof HeadlessTab.Panel>;
 
 export function TabPanel(props: TabPanelProps) {
-    return <HeadlessTab.Panel className="my-4" {...props} />;
+    return <HeadlessTab.Panel {...props} />;
 }
 
 export type TabGroupProps = ExtractProps<typeof HeadlessTab.Group> & {
