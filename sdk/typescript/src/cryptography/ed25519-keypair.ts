@@ -70,18 +70,11 @@ export class Ed25519Keypair implements Keypair {
     options?: { skipValidation?: boolean }
   ): Ed25519Keypair {
     const secretKeyLength = secretKey.length;
-    if (secretKeyLength != 64) {
-      // Many users actually wanted to invoke fromSeed(seed: Uint8Array), especially when reading from keystore.
-      if (secretKeyLength == 32) {
-        throw new Error(
-          'Wrong secretKey size. Expected 64 bytes, got 32. Similar function exists: fromSeed(seed: Uint8Array)'
-        );
-      }
-      throw new Error(
-        `Wrong secretKey size. Expected 64 bytes, got ${secretKeyLength}.`
-      );
+    if (secretKeyLength != 32) {
+      throw new Error(`Wrong seed size. Expected 32 bytes, got ${secretKeyLength}.`);
     }
-    const keypair = nacl.sign.keyPair.fromSecretKey(secretKey);
+    const keypair = nacl.sign.keyPair.fromSeed(secretKey);
+
     if (!options || !options.skipValidation) {
       const encoder = new TextEncoder();
       const signData = encoder.encode('sui validation');
@@ -91,19 +84,6 @@ export class Ed25519Keypair implements Keypair {
       }
     }
     return new Ed25519Keypair(keypair);
-  }
-
-  /**
-   * Generate an Ed25519 keypair from a 32 byte seed.
-   *
-   * @param seed seed byte array
-   */
-  static fromSeed(seed: Uint8Array): Ed25519Keypair {
-    const seedLength = seed.length;
-    if (seedLength != 32) {
-      throw new Error(`Wrong seed size. Expected 32 bytes, got ${seedLength}.`);
-    }
-    return new Ed25519Keypair(nacl.sign.keyPair.fromSeed(seed));
   }
 
   /**

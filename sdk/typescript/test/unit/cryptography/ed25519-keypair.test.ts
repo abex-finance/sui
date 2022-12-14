@@ -7,9 +7,9 @@ import { describe, it, expect } from 'vitest';
 import { Base64DataBuffer, Ed25519Keypair } from '../../../src';
 
 const VALID_SECRET_KEY =
-  'mdqVWeFekT7pqy5T49+tV12jO0m+ESW7ki4zSU9JiCgbL0kJbj5dvQ/PqcDAzZLZqzshVEs01d1KZdmLh4uZIg==';
+  'QiWNzaFM8RHGAriXG4zIQ+keRsqQUVHAJ0SmsBfmkxY=';
 const INVALID_SECRET_KEY =
-  'mdqVWeFekT7pqy5T49+tV12jO0m+ESW7ki4zSU9JiCgbL0kJbj5dvQ/PqcDAzZLZqzshVEs01d1KZdmLh4uZIG==';
+  'QiWNzaFM8RHGAriXG4zIQ+keRsqQUVHAJ0SmsBfmkxbMYjMuNLstXNafYO+7KjbLkWx+tFgwHqNmNsTbsBK9iA==';
 const TEST_MNEMONIC =
   'result crisp session latin must fruit genuine question prevent start coconut brave speak student dismiss';
 
@@ -24,7 +24,7 @@ describe('ed25519-keypair', () => {
     const secretKey = fromB64(VALID_SECRET_KEY);
     const keypair = Ed25519Keypair.fromSecretKey(secretKey);
     expect(keypair.getPublicKey().toBase64()).toEqual(
-      'Gy9JCW4+Xb0Pz6nAwM2S2as7IVRLNNXdSmXZi4eLmSI='
+      'zGIzLjS7LVzWn2Dvuyo2y5FsfrRYMB6jZjbE27ASvYg='
     );
   });
 
@@ -32,24 +32,7 @@ describe('ed25519-keypair', () => {
     const secretKey = fromB64(INVALID_SECRET_KEY);
     expect(() => {
       Ed25519Keypair.fromSecretKey(secretKey);
-    }).toThrow('provided secretKey is invalid');
-  });
-
-  it('creating keypair from invalid secret key succeeds if validation is skipped', () => {
-    const secretKey = fromB64(INVALID_SECRET_KEY);
-    const keypair = Ed25519Keypair.fromSecretKey(secretKey, {
-      skipValidation: true,
-    });
-    expect(keypair.getPublicKey().toBase64()).toEqual(
-      'Gy9JCW4+Xb0Pz6nAwM2S2as7IVRLNNXdSmXZi4eLmSA='
-    );
-  });
-
-  it('generate keypair from random seed', () => {
-    const keypair = Ed25519Keypair.fromSeed(Uint8Array.from(Array(32).fill(8)));
-    expect(keypair.getPublicKey().toBase64()).toEqual(
-      'E5j2LG0aRXxRumpLXz29L2n8qTIWIY3ImX5Ba9F9k8o='
-    );
+    }).toThrow('Wrong seed size. Expected 32 bytes, got 64.');
   });
 
   it('signature of data is valid', () => {
