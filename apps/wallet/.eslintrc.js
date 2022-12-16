@@ -51,4 +51,12 @@ module.exports = {
         ],
         'no-console': ['warn'],
     },
+    overrides: [
+        {
+            files: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+            rules: {
+                '@typescript-eslint/no-non-null-assertion': 'off',
+            },
+        },
+    ],
 };
