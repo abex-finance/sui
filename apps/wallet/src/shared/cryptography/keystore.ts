@@ -7,7 +7,8 @@ type Serializable =
     | string
     | number
     | boolean
-    | { [index: string]: Serializable };
+    | { [index: string]: Serializable }
+    | Serializable[];
 
 export async function encrypt(
     password: string,
