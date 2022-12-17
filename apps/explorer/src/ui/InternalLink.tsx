@@ -15,6 +15,11 @@ export type ObjectLinkProps = {
     noTruncate?: boolean;
 };
 
+export type ValidatorLinkProps = {
+    address: string;
+    noTruncate?: boolean;
+};
+
 export function AddressLink({ address, noTruncate }: AddressLinkProps) {
     const truncatedAddress = noTruncate ? address : formatAddress(address);
     return (
@@ -28,6 +33,15 @@ export function ObjectLink({ objectId, noTruncate }: ObjectLinkProps) {
     const truncatedObjectId = noTruncate ? objectId : formatAddress(objectId);
     return (
         <Link variant="mono" to={`/object/${encodeURIComponent(objectId)}`}>
+            {truncatedObjectId}
+        </Link>
+    );
+}
+
+export function ValidatorLink({ address, noTruncate }: ValidatorLinkProps) {
+    const truncatedObjectId = noTruncate ? address : formatAddress(address);
+    return (
+        <Link variant="mono" to={`/validator/${encodeURIComponent(address)}`}>
             {truncatedObjectId}
         </Link>
     );
