@@ -13,7 +13,6 @@ use sui_types::base_types::SuiAddress;
 use sui_types::crypto;
 use sui_types::crypto::{SignatureScheme, ToFromBytes};
 use sui_types::messages::{ExecuteTransactionRequestType, Transaction, TransactionData};
-use sui_types::object::Owner;
 
 use crate::errors::Error;
 use crate::operations::Operation;

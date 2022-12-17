@@ -8,7 +8,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 
 FROM chef AS builder
 RUN git clone https://github.com/MystenLabs/sui .
-RUN git checkout devnet
+RUN git checkout rosetta-devnet
 
 RUN curl -sSfL https://raw.githubusercontent.com/coinbase/rosetta-cli/master/scripts/install.sh | sh -s
 RUN curl -fLJO https://github.com/MystenLabs/sui-genesis/raw/main/devnet/genesis.blob

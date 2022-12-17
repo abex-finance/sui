@@ -8,7 +8,6 @@ use axum::{Extension, Json};
 use futures::StreamExt;
 
 use sui_sdk::SUI_COIN_TYPE;
-use sui_types::object::Owner;
 
 use crate::errors::Error;
 use crate::types::{
