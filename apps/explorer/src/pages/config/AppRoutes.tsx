@@ -16,6 +16,7 @@ import SearchResult from '../search-result/SearchResult';
 import SearchError from '../searcherror/SearchError';
 import TransactionResult from '../transaction-result/TransactionResult';
 import Transactions from '../transactions/Transactions';
+import { ValidatorDetails } from '../validator/ValidatorDetails';
 import { ValidatorPageResult } from '../validators/Validators';
 
 function RedirectWithId({ base }: { base: string }) {
@@ -35,6 +36,7 @@ function AppRoutes() {
             <Route path="/validators" element={<ValidatorPageResult />} />
             <Route path="/search-result/:id" element={<SearchResult />} />
             <Route path="/error/:category/:id" element={<SearchError />} />
+            <Route path="/validator/:id" element={<ValidatorDetails />} />
 
             {/* Support the existing plural routes: */}
             <Route
