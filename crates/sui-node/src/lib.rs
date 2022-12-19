@@ -83,6 +83,7 @@ pub struct ValidatorComponents {
     consensus_adapter: Arc<ConsensusAdapter>,
     checkpoint_service: Arc<CheckpointService>,
 }
+use sui_json_rpc::governance_api::GovernanceReadApi;
 
 pub struct SuiNode {
     config: NodeConfig,
@@ -686,6 +687,7 @@ pub async fn build_server(
     server.register_module(FullNodeApi::new(state.clone()))?;
     server.register_module(BcsApiImpl::new(state.clone()))?;
     server.register_module(FullNodeTransactionBuilderApi::new(state.clone()))?;
+    server.register_module(GovernanceReadApi::new(state.clone()))?;
 
     if let Some(transaction_orchestrator) = transaction_orchestrator {
         server.register_module(FullNodeTransactionExecutionApi::new(
