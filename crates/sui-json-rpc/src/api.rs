@@ -14,7 +14,8 @@ use sui_json_rpc_types::{
     RPCTransactionRequestParams, SuiCoinMetadata, SuiEventEnvelope, SuiEventFilter,
     SuiExecuteTransactionResponse, SuiMoveNormalizedFunction, SuiMoveNormalizedModule,
     SuiMoveNormalizedStruct, SuiObjectInfo, SuiTransactionAuthSignersResponse,
-    SuiTransactionBuilderMode, SuiTransactionEffects, SuiTransactionFilter, SuiTransactionResponse,
+    SuiTransactionBuilderMode, SuiTransactionEffects,SuiTBlsSignObjectCreationEpoch,
+    SuiTBlsSignRandomnessObjectResponse,  s SuiTransactionFilter, SuiTransactionResponse,
     SuiTypeTag, TransactionBytes, TransactionsPage,
 };
 use sui_open_rpc_macros::open_rpc;
@@ -531,6 +532,20 @@ pub trait EventReadApi {
         /// query result ordering, default to false (ascending order), oldest record first.  
         descending_order: Option<bool>,
     ) -> RpcResult<EventPage>;
+}
+
+#[open_rpc(namespace = "sui", tag = "Threshold BLS APIs")]
+#[rpc(server, client, namespace = "sui")]
+pub trait ThresholdBlsApi {
+    /// Sign an a Randomness object with threshold BLS.
+    #[method(name = "tblsSignRandomnessObject")]
+    async fn tbls_sign_randomness_object(
+        &self,
+        /// The object ID.
+        object_id: ObjectID,
+        /// The epoch in which the object was created if it was in an old epoch, or the effects certificate if it was the current epoch (to verify that the object was committed).
+        object_creation_epoch: SuiTBlsSignObjectCreationEpoch,
+    ) -> RpcResult<SuiTBlsSignRandomnessObjectResponse>;
 }
 
 #[open_rpc(namespace = "sui", tag = "APIs to execute transactions.")]
