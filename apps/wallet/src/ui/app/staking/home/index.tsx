@@ -5,19 +5,19 @@ import { useFeature } from '@growthbook/growthbook-react';
 import { Route, Routes } from 'react-router-dom';
 
 import { FEATURES } from '../../experimentation/features';
-import StakeNew from '../stake';
+import StakePage from '../stake';
 import { ValidatorDetail } from '../validator-detail';
-import StakeHome from './Stake';
+import { Validators } from '../validators';
 
 export function Staking() {
     const stakingEnabled = useFeature(FEATURES.STAKING_ENABLED).on;
 
     return (
         <Routes>
-            <Route path="/*" element={<StakeHome />} />
+            <Route path="/*" element={<Validators />} />
             <Route path="/validator-details" element={<ValidatorDetail />} />
             {stakingEnabled ? (
-                <Route path="/new" element={<StakeNew />} />
+                <Route path="/new" element={<StakePage />} />
             ) : null}
         </Routes>
     );
