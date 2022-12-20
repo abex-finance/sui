@@ -22,11 +22,9 @@ module.exports = {
                 'gradient-white':
                     'linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 16.07%);',
             },
-            minHeight: {
-                8: '2rem',
-            },
             spacing: {
                 7.5: '1.875rem',
+                8: '2rem',
             },
             height: {
                 header: '68px',
