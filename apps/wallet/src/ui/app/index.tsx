@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { FEATURES } from './experimentation/features';
+import { useAccounts } from './hooks/useAccounts';
+import { useActiveAddress } from './hooks/useActiveAddress';
 import { AppType } from './redux/slices/app/AppType';
 import StakeHome from './staking/home';
 import StakeNew from './staking/stake';
@@ -61,7 +63,9 @@ const App = () => {
         dispatch(setNavVisibility(menuVisible));
     }, [location, dispatch]);
     const stakingEnabled = useFeature(FEATURES.STAKING_ENABLED).on;
-
+    const activeAddress = useActiveAddress();
+    const accounts = useAccounts();
+    console.log({ accounts, activeAddress });
     return (
         <Routes>
             <Route path="/*" element={<HomePage />}>

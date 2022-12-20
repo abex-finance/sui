@@ -43,6 +43,14 @@ Keyring.on('lockedStatusUpdate', (isLocked: boolean) => {
     connections.notifyForLockedStatusUpdate(isLocked);
 });
 
+Keyring.on('accountsChanged', () => {
+    connections.notifyForLockedStatusUpdate(Keyring.isLocked);
+});
+
+Keyring.on('activeAccountChanged', () => {
+    connections.notifyForLockedStatusUpdate(Keyring.isLocked);
+});
+
 Browser.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === LOCK_ALARM_NAME) {
         Keyring.reviveDone.finally(() => Keyring.lock());
@@ -65,3 +73,4 @@ if (!IS_SESSION_STORAGE_SUPPORTED) {
         }
     });
 }
+console.log(Keyring);

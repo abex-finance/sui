@@ -3,17 +3,14 @@
 
 import { isBasePayload } from '_payloads';
 
-import type {
-    ExportedKeypair,
-    SignatureScheme,
-    SuiAddress,
-} from '@mysten/sui.js';
+import type { SignatureScheme, SuiAddress } from '@mysten/sui.js';
 import type { BasePayload, Payload } from '_payloads';
+import type { Account } from '_src/background/keyring/Account';
 
 type MethodToPayloads = {
     create: {
         args: { password: string; importedEntropy?: string };
-        return: { keypair: ExportedKeypair };
+        return: void;
     };
     getEntropy: {
         args: string | undefined;
@@ -25,12 +22,12 @@ type MethodToPayloads = {
     };
     walletStatusUpdate: {
         args: never;
-        return: Partial<{
+        return: {
             isLocked: boolean;
             isInitialized: boolean;
-            // we can replace keypair (once we stop signing from the UI) with the account address
-            activeAccount: ExportedKeypair;
-        }>;
+            accounts: ReturnType<Account['toJSON']>[];
+            activeAddress: string | null;
+        };
     };
     lock: {
         args: never;
