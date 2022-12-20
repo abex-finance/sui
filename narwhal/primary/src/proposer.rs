@@ -401,7 +401,9 @@ impl Proposer {
             let enough_parents = !self.last_parents.is_empty();
             let enough_digests = self.digests.len() >= self.header_num_of_batches_threshold;
             let mut timer_expired = timer.is_elapsed();
-
+            if !enough_parents {
+                debug!("Not enough parents for round {}", self.round);
+            }
             if (timer_expired || (enough_digests && advance)) && enough_parents {
                 if timer_expired && matches!(self.network_model, NetworkModel::PartiallySynchronous)
                 {
@@ -551,6 +553,7 @@ impl Proposer {
                             // late (or just joined the network).
                             self.round = round;
                             let _ = self.tx_narwhal_round_updates.send(self.round);
+                            debug!("Received {} parents with a greater round. Updated round {}", parents.len(), round);
                             self.last_parents = parents;
 
                         },
@@ -561,6 +564,7 @@ impl Proposer {
                         Ordering::Equal => {
                             // The core gives us the parents the first time they are enough to form a quorum.
                             // Then it keeps giving us all the extra parents.
+                            debug!("Received {} parents with an equal round {}.", parents.len(), self.round);
                             self.last_parents.extend(parents)
                         }
                     }
