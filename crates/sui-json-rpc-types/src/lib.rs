@@ -397,9 +397,9 @@ impl Display for SuiParsedTransactionResponse {
 }
 
 #[derive(Serialize, Deserialize, Debug, JsonSchema)]
-pub enum SuiTBlsSignObjectCreationEpoch {
-    PriorEpoch(EpochId),
-    CurrentEpoch(SuiCertifiedTransactionEffects),
+pub enum SuiTBlsSignObjectCommitmentType {
+    ConsensusCommitted,
+    FastPathCommitted(SuiCertifiedTransactionEffects),
 }
 
 #[derive(Serialize, Deserialize, Debug, JsonSchema)]

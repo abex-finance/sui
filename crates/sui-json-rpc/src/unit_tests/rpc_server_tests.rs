@@ -15,7 +15,7 @@ use sui_framework_build::compiled_package::BuildConfig;
 use sui_json::SuiJsonValue;
 use sui_json_rpc_types::{
     Balance, CoinPage, GetObjectDataResponse, SuiCoinMetadata, SuiEvent,
-    SuiExecuteTransactionResponse, SuiExecutionStatus, SuiTBlsSignObjectCreationEpoch,
+    SuiExecuteTransactionResponse, SuiExecutionStatus, SuiTBlsSignObjectCommitmentType,
     SuiTBlsSignRandomnessObjectResponse, SuiTransactionResponse, TransactionBytes,
 };
 use sui_keys::keystore::{AccountKeystore, FileBasedKeystore, Keystore};
@@ -138,12 +138,15 @@ async fn test_tbls_sign_randomness_object() -> Result<(), anyhow::Error> {
     let obj_id = effects.effects.mutated.get(0).unwrap().reference.object_id;
 
     let tx2_response: SuiTBlsSignRandomnessObjectResponse = http_client
-        .tbls_sign_randomness_object(obj_id, SuiTBlsSignObjectCreationEpoch::PriorEpoch(0))
+        .tbls_sign_randomness_object(
+            obj_id,
+            SuiTBlsSignObjectCommitmentType::ConsensusCommitted(0),
+        )
         .await?;
     let tx3_response: SuiTBlsSignRandomnessObjectResponse = http_client
         .tbls_sign_randomness_object(
             obj_id,
-            SuiTBlsSignObjectCreationEpoch::CurrentEpoch(effects),
+            SuiTBlsSignObjectCommitmentType::FastPathCommitted(effects),
         )
         .await?;
 

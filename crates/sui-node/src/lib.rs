@@ -75,9 +75,8 @@ use sui_core::narwhal_manager::{
     run_narwhal_manager, NarwhalConfiguration, NarwhalManager, NarwhalStartMessage,
 };
 use sui_json_rpc::coin_api::CoinReadApi;
-use sui_types::error::{SuiError, SuiResult};
 use sui_json_rpc::threshold_bls_api::ThresholdBlsApiImpl;
-
+use sui_types::error::{SuiError, SuiResult};
 
 pub struct ValidatorComponents {
     _validator_server_handle: tokio::task::JoinHandle<Result<()>>,

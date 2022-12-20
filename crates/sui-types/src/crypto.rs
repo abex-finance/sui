@@ -1557,9 +1557,6 @@ pub fn construct_tbls_randomness_object_message(epoch: EpochId, obj_id: &ObjectI
     msg.extend_from_slice(bcs::to_bytes(&epoch).unwrap().as_slice());
     msg.extend_from_slice(obj_id.as_ref());
     // TODO remove
-    println!(
-        "!!! msg - epoch {} obj {} msg {:?}",
-        &epoch, obj_id, &msg
-    );
+    println!("!!! msg - epoch {} obj {} msg {:?}", &epoch, obj_id, &msg);
     msg
 }
