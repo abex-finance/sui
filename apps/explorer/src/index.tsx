@@ -1,11 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    WalletStandardAdapterProvider,
-    UnsafeBurnerWalletAdapter,
-} from '@mysten/wallet-adapter-all-wallets';
-import { WalletProvider, type WalletProviderProps } from '@mysten/wallet-kit';
+import { WalletKitProvider } from '@mysten/wallet-kit';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import React from 'react';
@@ -73,20 +69,15 @@ if (import.meta.env.PROD) {
     });
 }
 
-const adapters: WalletProviderProps['adapters'] = [
-    new WalletStandardAdapterProvider(),
-];
-if (import.meta.env.DEV) {
-    adapters.push(new UnsafeBurnerWalletAdapter());
-}
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <WalletProvider adapters={adapters} autoConnect={false}>
+        <WalletKitProvider
+            enableUnsafeBurner={import.meta.env.DEV} /*autoConnect={false}*/
+        >
             <Router>
                 <App />
             </Router>
-        </WalletProvider>
+        </WalletKitProvider>
     </React.StrictMode>
 );
 
