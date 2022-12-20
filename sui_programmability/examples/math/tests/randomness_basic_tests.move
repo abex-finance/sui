@@ -19,7 +19,7 @@ module math::randomness_basic_tests {
 
         randomness_basics::create_owned_randomness(ctx);
         test_scenario::next_tx(scenario, TEST_USER_ADDR);
-        let r = test_scenario::take_from_sender<Randomness<randomness_basics::WITENESS>>(scenario);
+        let r = test_scenario::take_from_sender<Randomness<randomness_basics::WITNESS>>(scenario);
         assert!(option::is_none(randomness::value(&r)), 0);
 
         // Get a valid signature and set the object.
@@ -39,7 +39,7 @@ module math::randomness_basic_tests {
 
         randomness_basics::create_shared_randomness(ctx);
         test_scenario::next_tx(scenario, TEST_USER_ADDR);
-        let r = test_scenario::take_shared<Randomness<randomness_basics::WITENESS>>(scenario);
+        let r = test_scenario::take_shared<Randomness<randomness_basics::WITNESS>>(scenario);
         assert!(option::is_none(randomness::value(&r)), 0);
 
         // Get a valid signature and set the object.
