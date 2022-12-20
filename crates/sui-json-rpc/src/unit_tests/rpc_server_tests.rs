@@ -89,72 +89,139 @@ async fn test_public_transfer_object() -> Result<(), anyhow::Error> {
 }
 
 // TODO: WIP, complete this tests
-#[sim_test]
+// #[sim_test]
+#[tokio::test]
 async fn test_tbls_sign_randomness_object() -> Result<(), anyhow::Error> {
-    let port = get_available_port();
-    let cluster = TestClusterBuilder::new()
-        .set_fullnode_rpc_port(port)
-        .build()
-        .await?;
+    let cluster = TestClusterBuilder::new().build().await?;
     let http_client = cluster.rpc_client();
-    let address = cluster.accounts.first().unwrap();
-
-    let objects = http_client.get_objects_owned_by_address(*address).await?;
-
-    let transaction_bytes: TransactionBytes = http_client
-        .transfer_object(
-            *address,
-            objects.first().unwrap().object_id,
-            Some(objects.last().unwrap().object_id),
-            1000,
-            *address,
-        )
-        .await?;
 
     let keystore_path = cluster.swarm.dir().join(SUI_KEYSTORE_FILENAME);
     let keystore = Keystore::from(FileBasedKeystore::new(&keystore_path)?);
-    let tx = to_sender_signed_transaction(transaction_bytes.to_data()?, keystore.get_key(address)?);
-    let (tx_bytes, signature_bytes) = tx.to_tx_bytes_and_signature();
-    let tx_bytes1 = tx_bytes.clone();
 
-    let tx1_response: SuiExecuteTransactionResponse = http_client
-        .execute_transaction_serialized_sig(
-            tx_bytes1,
+    let address = cluster.accounts.first().unwrap();
+    let objects = http_client.get_objects_owned_by_address(*address).await?;
+    let gas = objects.first().unwrap();
+
+    //////
+    // Publish the basic randomness example
+    //////
+
+    let compiled_modules = BuildConfig::default()
+        .build(
+            Path::new("../../sui_programmability/examples/math/sources/randomness_basic.move")
+                .to_path_buf(),
+        )?
+        .get_package_base64();
+    let transaction_bytes: TransactionBytes = http_client
+        .publish(*address, compiled_modules, Some(gas.object_id), 10000)
+        .await?;
+
+    let tx = to_sender_signed_transaction(transaction_bytes.to_data()?, keystore.get_key(address)?);
+    let (tx_bytes, sig_scheme, signature_bytes, pub_key) = tx.to_network_data_for_execution();
+
+    let tx_response = http_client
+        .execute_transaction(
+            tx_bytes,
+            sig_scheme,
             signature_bytes,
+            pub_key,
+            ExecuteTransactionRequestType::WaitForLocalExecution,
+        )
+        .await?;
+
+    println!("!!! tx response {:?}", &tx_response);
+    let SuiExecuteTransactionResponse::EffectsCert {effects,..} = tx_response else {
+        panic!()
+    };
+
+    let package_id = effects
+        .effects
+        .events
+        .iter()
+        .find_map(|e| {
+            if let SuiEvent::Publish { package_id, .. } = e {
+                Some(package_id)
+            } else {
+                None
+            }
+        })
+        .unwrap();
+
+    println!("!!! package_id {:?}", &package_id);
+
+    //////
+    // Call create_owned_randomness
+    //////
+
+    let module = "randomness_basics".to_string();
+    let function = "create_owned_randomness".to_string();
+    let transaction_bytes: TransactionBytes = http_client
+        .move_call(
+            *address,
+            *package_id,
+            module,
+            function,
+            vec![],
+            vec![],
+            Some(gas.object_id),
+            10_000,
+        )
+        .await?;
+    let tx = transaction_bytes.to_data()?;
+    let tx = to_sender_signed_transaction(tx, keystore.get_key(address)?);
+    let (tx_bytes, sig_scheme, signature_bytes, pub_key) = tx.to_network_data_for_execution();
+
+    let tx_response = http_client
+        .execute_transaction(
+            tx_bytes,
+            sig_scheme,
+            signature_bytes,
+            pub_key,
             ExecuteTransactionRequestType::WaitForEffectsCert,
         )
         .await?;
 
-    println!("!!! tx1 {:?}", &tx1_response);
+    println!("!!! tx response 2 {:?}", &tx_response);
+    let SuiExecuteTransactionResponse::EffectsCert {effects,..} = tx_response else {
+        panic!()
+    };
+    assert_eq!(SuiExecutionStatus::Success, effects.effects.status);
 
-    let effects =
-        if let SuiExecuteTransactionResponse::EffectsCert { effects, .. } = tx1_response {
-            Some(effects)
-        } else {
-            None
-        }
+    let (randomness_object_id, randomness_object_type) = effects
+        .effects
+        .events
+        .iter()
+        .find_map(|e| {
+            if let SuiEvent::NewObject {
+                object_id,
+                object_type,
+                ..
+            } = e {
+                Some((object_id, object_type))
+            } else {
+                None
+            }
+        })
         .unwrap();
 
-    let obj_id = effects.effects.mutated.get(0).unwrap().reference.object_id;
+    println!("!!! randomness object id {:?} type {:?}", &randomness_object_id, &randomness_object_type);
 
-    let tx2_response: SuiTBlsSignRandomnessObjectResponse = http_client
+    //////
+    // Get the tBLS signature from the JSON-RPC.
+    //////
+
+    let tx_response: SuiTBlsSignRandomnessObjectResponse = http_client
         .tbls_sign_randomness_object(
-            obj_id,
-            SuiTBlsSignObjectCommitmentType::ConsensusCommitted(0),
+            *randomness_object_id,
+            SuiTBlsSignObjectCommitmentType::ConsensusCommitted,
         )
         .await?;
-    let tx3_response: SuiTBlsSignRandomnessObjectResponse = http_client
-        .tbls_sign_randomness_object(
-            obj_id,
-            SuiTBlsSignObjectCommitmentType::FastPathCommitted(effects),
-        )
-        .await?;
-
-    // TODO remove
-    println!("!!! {:?}", tx2_response);
-    println!("!!! {:?}", tx3_response);
+    println!("!!! tx response 3 {:?}", &tx_response);
 
     Ok(())
+
+
+    // TODO: set the randomness
 }
 
 #[sim_test]
