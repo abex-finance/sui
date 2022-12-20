@@ -1,17 +1,15 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-    RawSigner,
-    JsonRpcProvider,
-    LocalTxnDataSerializer,
-} from '@mysten/sui.js';
+import { JsonRpcProvider, LocalTxnDataSerializer } from '@mysten/sui.js';
 
+import { BackgroundServiceSigner } from './background-client/BackgroundServiceSigner';
 import { growthbook } from './experimentation/feature-gating';
 import { FEATURES } from './experimentation/features';
 import { queryClient } from './helpers/queryClient';
 
-import type { Keypair } from '@mysten/sui.js';
+import type { BackgroundClient } from './background-client';
+import type { SuiAddress, SignerWithProvider } from '@mysten/sui.js';
 
 export enum API_ENV {
     local = 'local',
@@ -93,7 +91,7 @@ export const generateActiveNetworkList = (): NetworkTypes[] => {
 
 export default class ApiProvider {
     private _apiFullNodeProvider?: JsonRpcProvider;
-    private _signer: RawSigner | null = null;
+    private _signerByAddress: Map<SuiAddress, SignerWithProvider> = new Map();
 
     public setNewJsonRpcProvider(
         apiEnv: API_ENV = DEFAULT_API_ENV,
@@ -104,7 +102,7 @@ export default class ApiProvider {
         this._apiFullNodeProvider = new JsonRpcProvider(
             customRPC ?? getDefaultAPI(apiEnv).fullNode
         );
-        this._signer = null;
+        this._signerByAddress.clear();
     }
 
     public get instance() {
@@ -117,21 +115,28 @@ export default class ApiProvider {
         };
     }
 
-    public getSignerInstance(keypair: Keypair): RawSigner {
+    public getSignerInstance(
+        address: SuiAddress,
+        backgroundClient: BackgroundClient
+    ): SignerWithProvider {
         if (!this._apiFullNodeProvider) {
             this.setNewJsonRpcProvider();
         }
-        if (!this._signer) {
-            this._signer = new RawSigner(
-                keypair,
-                this._apiFullNodeProvider,
-
-                growthbook.isOn(FEATURES.USE_LOCAL_TXN_SERIALIZER)
-                    ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                      new LocalTxnDataSerializer(this._apiFullNodeProvider!)
-                    : undefined
+        if (!this._signerByAddress.has(address)) {
+            this._signerByAddress.set(
+                address,
+                new BackgroundServiceSigner(
+                    address,
+                    backgroundClient,
+                    this._apiFullNodeProvider,
+                    growthbook.isOn(FEATURES.USE_LOCAL_TXN_SERIALIZER)
+                        ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                          new LocalTxnDataSerializer(this._apiFullNodeProvider!)
+                        : undefined
+                )
             );
         }
-        return this._signer;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return this._signerByAddress.get(address)!;
     }
 }
