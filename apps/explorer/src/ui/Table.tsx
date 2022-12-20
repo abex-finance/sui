@@ -9,10 +9,21 @@ import {
     type TableOptions,
 } from '@tanstack/react-table';
 
-interface TableProps<TData extends RowData>
-    extends Omit<TableOptions<TData>, 'getCoreRowModel'> {}
+import { Placeholder } from './Placeholder';
 
-export function Table<TData extends RowData>(props: TableProps<TData>) {
+interface TableProps<TData extends RowData>
+    extends Omit<TableOptions<TData>, 'getCoreRowModel'> {
+    isLoading?: boolean;
+    loadingPlaceholders?: number;
+}
+
+const DEFAULT_LOADING_PLACEHOLDERS = 10;
+
+export function Table<TData extends RowData>({
+    isLoading,
+    loadingPlaceholders,
+    ...props
+}: TableProps<TData>) {
     const table = useReactTable({
         ...props,
         getCoreRowModel: getCoreRowModel(),
@@ -40,21 +51,45 @@ export function Table<TData extends RowData>(props: TableProps<TData>) {
                 ))}
             </thead>
             <tbody>
-                {table.getRowModel().rows.map((row) => (
-                    <tr key={row.id}>
-                        {row.getVisibleCells().map((cell) => (
-                            <td
-                                key={cell.id}
-                                className="px-0 py-2 text-bodySmall font-medium leading-none text-steel-darker"
-                            >
-                                {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext()
-                                )}
-                            </td>
-                        ))}
-                    </tr>
-                ))}
+                {isLoading
+                    ? Array.from(
+                          {
+                              length:
+                                  loadingPlaceholders ||
+                                  DEFAULT_LOADING_PLACEHOLDERS,
+                          },
+                          (_, i) => (
+                              <tr key={i}>
+                                  {table
+                                      .getVisibleFlatColumns()
+                                      .map((column) => (
+                                          <td
+                                              key={column.id}
+                                              className="px-0 py-2 text-bodySmall font-medium leading-none text-steel-darker"
+                                          >
+                                              <div className="pr-2">
+                                                  <Placeholder />
+                                              </div>
+                                          </td>
+                                      ))}
+                              </tr>
+                          )
+                      )
+                    : table.getRowModel().rows.map((row) => (
+                          <tr key={row.id}>
+                              {row.getVisibleCells().map((cell) => (
+                                  <td
+                                      key={cell.id}
+                                      className="px-0 py-2 text-bodySmall font-medium leading-none text-steel-darker"
+                                  >
+                                      {flexRender(
+                                          cell.column.columnDef.cell,
+                                          cell.getContext()
+                                      )}
+                                  </td>
+                              ))}
+                          </tr>
+                      ))}
             </tbody>
             <tfoot>
                 {table.getFooterGroups().map((footerGroup) => (

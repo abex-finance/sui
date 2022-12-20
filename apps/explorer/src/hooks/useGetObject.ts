@@ -13,6 +13,7 @@ export function useGetObject(
     const response = useQuery(
         ['object', objectId],
         async () => {
+            await new Promise(resolve => setTimeout(resolve, 2000));
             return rpc.getObject(objectId);
         },
         { enabled: !!objectId }

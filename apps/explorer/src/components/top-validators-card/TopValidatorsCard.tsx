@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Base64DataBuffer, isSuiObject, isSuiMoveObject } from '@mysten/sui.js';
-import BigNumber from 'bignumber.js';
-import { useMemo } from 'react';
+import { createColumnHelper } from '@tanstack/react-table';
 
 import { ReactComponent as ArrowRight } from '../../assets/SVGIcons/12px/ArrowRight.svg';
 
@@ -11,13 +10,10 @@ import { useGetObject } from '~/hooks/useGetObject';
 import { Banner } from '~/ui/Banner';
 import { AddressLink } from '~/ui/InternalLink';
 import { Link } from '~/ui/Link';
-import { PlaceholderTable } from '~/ui/PlaceholderTable';
-import { Text } from '~/ui/Text';
 import { Table } from '~/ui/Table';
-import { createColumnHelper } from '@tanstack/react-table';
+import { Text } from '~/ui/Text';
 
 const VALIDATORS_OBJECT_ID = '0x05';
-const NUMBER_OF_VALIDATORS = 10;
 
 const VALDIATOR_NAME = /^[A-Z-_.\s0-9]+$/i;
 
@@ -145,34 +141,6 @@ function getName(name: string | number[]) {
     }
 }
 
-export function processValidators(set: Validator[], totalStake: bigint) {
-    return set.map((av) => {
-        let name: string;
-        const rawName = av.fields.metadata.fields.name;
-        if (Array.isArray(rawName)) {
-            name = String.fromCharCode(...rawName);
-        } else {
-            name = textDecoder.decode(new Base64DataBuffer(rawName).getData());
-            if (!VALDIATOR_NAME.test(name)) {
-                name = rawName;
-            }
-        }
-        return {
-            name,
-            address: av.fields.metadata.fields.sui_address,
-            stake: av.fields.stake_amount,
-            stakePercent: getStakePercent(av.fields.stake_amount, totalStake),
-            delegation_count: av.fields.delegation_count || 0,
-        };
-    });
-}
-
-export const getStakePercent = (stake: bigint, total: bigint): number => {
-    const bnStake = new BigNumber(stake.toString());
-    const bnTotal = new BigNumber(total.toString());
-    return bnStake.div(bnTotal).multipliedBy(100).toNumber();
-};
-
 const columnHelper = createColumnHelper<Validator>();
 
 const columns = [
@@ -182,82 +150,18 @@ const columns = [
     }),
     columnHelper.accessor('fields.metadata.fields.sui_address', {
         header: 'Address',
-        cell: (info) => (
-            // TODO: Truncate:
-            <AddressLink address={info.getValue()} noTruncate={false} />
-        ),
+        cell: (info) => <AddressLink address={info.getValue()} />,
     }),
-    columnHelper.accessor('fields', {
+    columnHelper.accessor('fields.stake_amount', {
         header: 'Stake',
         cell: (info) => (
-            <StakeColumn
-                stake={info.getValue().stake_amount}
-                stakePercent={0}
-            />
+            <StakeColumn stake={info.getValue()} stakePercent={0} />
         ),
     }),
 ];
 
-const validatorsTable = (validatorsData: ValidatorState, limit?: number) => {
-    const totalStake = validatorsData.validators.fields.total_validator_stake;
-
-    const validators = processValidators(
-        validatorsData.validators.fields.active_validators,
-        totalStake
-    ).sort((a, b) => (a.name > b.name ? 1 : -1));
-
-    const validatorsItems = limit ? validators.splice(0, limit) : validators;
-
-    return {
-        data: validatorsItems.map((validator) => {
-            return {
-                name: (
-                    <Text
-                        variant="bodySmall"
-                        color="steel-darker"
-                        weight="medium"
-                    >
-                        {validator.name}
-                    </Text>
-                ),
-                stake: (
-                    <StakeColumn
-                        stake={validator.stake}
-                        stakePercent={validator.stakePercent}
-                    />
-                ),
-                delegation: (
-                    <Text variant="bodySmall" color="steel-darker">
-                        {validator.stake.toString()}
-                    </Text>
-                ),
-                address: (
-                    <AddressLink
-                        address={validator.address}
-                        noTruncate={!limit}
-                    />
-                ),
-            };
-        }),
-        columns: [
-            {
-                headerLabel: 'Name',
-                accessorKey: 'name',
-            },
-            {
-                headerLabel: 'Address',
-                accessorKey: 'address',
-            },
-            {
-                headerLabel: 'Stake',
-                accessorKey: 'stake',
-            },
-        ],
-    };
-};
-
 export function TopValidatorsCard({ limit }: { limit?: number }) {
-    const { data, isLoading, isSuccess, isError } =
+    const { data, isLoading, isError } =
         useGetObject(VALIDATORS_OBJECT_ID);
 
     const validatorData =
@@ -278,30 +182,21 @@ export function TopValidatorsCard({ limit }: { limit?: number }) {
 
     return (
         <>
-            {isLoading && (
-                <PlaceholderTable
-                    rowCount={limit || NUMBER_OF_VALIDATORS}
-                    rowHeight="13px"
-                    colHeadings={['Name', 'Address', 'Stake']}
-                    colWidths={['220px', '220px', '220px']}
-                />
-            )}
+            <Table
+                data={activeValidators ?? []}
+                columns={columns}
+                isLoading={isLoading}
+                loadingPlaceholders={5}
+            />
 
-            {isSuccess && activeValidators && (
-                <>
-                    <Table data={activeValidators} columns={columns} />
-
-                    {limit && (
-                        <div className="mt-3">
-                            <Link to="/validators">
-                                <div className="flex items-center gap-2">
-                                    More Validators{' '}
-                                    <ArrowRight fill="currentColor" />
-                                </div>
-                            </Link>
+            {limit && (
+                <div className="mt-3">
+                    <Link to="/validators">
+                        <div className="flex items-center gap-2">
+                            More Validators <ArrowRight fill="currentColor" />
                         </div>
-                    )}
-                </>
+                    </Link>
+                </div>
             )}
         </>
     );
