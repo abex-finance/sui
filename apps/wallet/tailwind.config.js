@@ -18,6 +18,10 @@ module.exports = {
                 'gradient-blue-start': '#589AEA',
                 'gradient-blue-end': '#4C75A6',
             },
+            background: {
+                'gradient-white':
+                    'linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 16.07%);',
+            },
             minHeight: {
                 8: '2rem',
             },
