@@ -416,7 +416,7 @@ impl CheckpointBuilder {
             .await?;
         }
         if effects.is_empty() {
-            return Ok(None);
+            //return Ok(None);
         }
         let contents = CheckpointContents::new_with_causally_ordered_transactions(
             effects.iter().map(TransactionEffects::execution_digests),
@@ -830,7 +830,7 @@ impl CheckpointServiceNotify for CheckpointService {
                 return Ok(());
             }
         }
-        info!(
+        debug!(
             "Received signature for checkpoint sequence {}, digest {} from {}",
             sequence,
             Hex::encode(info.summary.summary.digest()),

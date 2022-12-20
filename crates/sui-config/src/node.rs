@@ -134,7 +134,7 @@ pub fn default_concurrency_limit() -> Option<usize> {
 }
 
 pub fn default_checkpoints_per_epoch() -> Option<u64> {
-    None
+    Some(500)
 }
 
 pub fn bool_true() -> bool {
