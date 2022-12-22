@@ -17,6 +17,14 @@ module.exports = {
             colors: {
                 'gradient-blue-start': '#589AEA',
                 'gradient-blue-end': '#4C75A6',
+                aliceBlue: '#F1F8FD',
+            },
+            fontSize: {
+                extraSmall: '8px',
+            },
+            spacing: {
+                7.5: '30px',
+                15: '60px',
             },
             minHeight: {
                 8: '2rem',
