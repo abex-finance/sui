@@ -9010,6 +9010,7 @@ dependencies = [
  "async-trait",
  "axum 0.5.17",
  "bcs",
+ "bincode",
  "clap 3.2.23",
  "eyre",
  "fastcrypto",
@@ -9020,6 +9021,7 @@ dependencies = [
  "mysten-metrics",
  "once_cell",
  "rand 0.8.5",
+ "rocksdb",
  "serde 1.0.149",
  "serde_json",
  "serde_with",
@@ -9033,6 +9035,7 @@ dependencies = [
  "sui-keys",
  "sui-node",
  "sui-sdk",
+ "sui-storage",
  "sui-types",
  "telemetry-subscribers",
  "tempfile",
@@ -9042,6 +9045,8 @@ dependencies = [
  "tower",
  "tower-http",
  "tracing",
+ "typed-store",
+ "typed-store-derive",
  "workspace-hack",
 ]
 
