@@ -119,8 +119,11 @@ pub enum SuiError {
     },
     #[error("Invalid Authority Bitmap: {}", error)]
     InvalidAuthorityBitmap { error: String },
-    #[error("Unexpected validator response from handle_transaction: {err}")]
-    UnexpectedResultFromValidatorHandleTransaction { err: String },
+    #[error("Validator response from handle_transaction with mismatched epoch: local_epoch: {local_epoch}, remote_epoch: {remote_epoch}")]
+    MismatchedEpochFromValidatorHandleTransaction {
+        local_epoch: EpochId,
+        remote_epoch: EpochId,
+    },
     #[error("Transaction certificate processing failed: {err}")]
     ErrorWhileProcessingCertificate { err: String },
     #[error(

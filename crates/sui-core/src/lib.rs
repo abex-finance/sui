@@ -32,4 +32,6 @@ pub mod transaction_orchestrator;
 pub mod transaction_streamer;
 pub mod validator_info;
 
+pub mod test_authority_clients;
+
 pub const SUI_CORE_VERSION: &str = env!("CARGO_PKG_VERSION");
