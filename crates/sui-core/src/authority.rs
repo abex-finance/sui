@@ -19,7 +19,6 @@ use prometheus::{
     register_int_gauge_with_registry, Histogram, IntCounter, IntGauge, Registry,
 };
 use serde::de::DeserializeOwned;
-use std::cmp::Ordering as CmpOrdering;
 use std::path::PathBuf;
 use std::str::FromStr;
 use std::time::Duration;
