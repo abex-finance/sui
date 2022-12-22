@@ -6,7 +6,7 @@ use std::marker::PhantomData;
 
 use anyhow::anyhow;
 use fastcrypto::encoding::{Base64, Encoding};
-use fastcrypto::traits::ToFromBytes;
+use fastcrypto::traits::{EncodeDecodeBase64, ToFromBytes};
 use move_core_types::account_address::AccountAddress;
 use serde;
 use serde::de::{Deserializer, Error};
@@ -201,7 +201,7 @@ impl SerializeAs<AuthoritySignature> for AuthSignature {
     where
         S: Serializer,
     {
-        Base64::encode(value.as_ref()).serialize(serializer)
+        value.encode_base64().serialize(serializer)
     }
 }
 

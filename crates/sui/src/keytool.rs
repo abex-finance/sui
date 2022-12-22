@@ -8,18 +8,16 @@ use anyhow::anyhow;
 use bip32::DerivationPath;
 use clap::*;
 use fastcrypto::encoding::{decode_bytes_hex, Base64, Encoding};
-use fastcrypto::traits::{ToFromBytes, VerifyingKey};
 use sui_keys::key_derive::generate_new_key;
 use sui_types::intent::Intent;
 use sui_types::messages::TransactionData;
 use tracing::info;
 
-use fastcrypto::ed25519::{Ed25519KeyPair, Ed25519PrivateKey, Ed25519PublicKey};
 use sui_keys::keystore::{AccountKeystore, Keystore};
 use sui_types::base_types::SuiAddress;
 use sui_types::crypto::{
-    get_authority_key_pair, AuthorityKeyPair, Ed25519SuiSignature, EncodeDecodeBase64,
-    NetworkKeyPair, SignatureScheme, SuiKeyPair, SuiSignatureInner,
+    get_authority_key_pair, AuthorityKeyPair, EncodeDecodeBase64, NetworkKeyPair, SignatureScheme,
+    SuiKeyPair,
 };
 #[cfg(test)]
 #[path = "unit_tests/keytool_tests.rs"]
@@ -93,7 +91,7 @@ impl KeyToolCommand {
                 let res: Result<SuiKeyPair, anyhow::Error> = read_keypair_from_file(&file);
                 match res {
                     Ok(keypair) => {
-                        println!("Public Key: {}", Base64::encode(keypair.public()));
+                        println!("Public Key: {}", keypair.public().encode_base64());
                         println!("Flag: {}", keypair.public().flag());
                     }
                     Err(e) => {
@@ -115,7 +113,7 @@ impl KeyToolCommand {
                     println!(
                         " {0: ^42} | {1: ^45} | {2: ^6}",
                         Into::<SuiAddress>::into(&pub_key),
-                        Base64::encode(&pub_key),
+                        pub_key.encode_base64(),
                         pub_key.scheme().to_string()
                     );
                 }
@@ -229,15 +227,10 @@ pub fn read_network_keypair_from_file<P: AsRef<std::path::Path>>(
     path: P,
 ) -> anyhow::Result<NetworkKeyPair> {
     let value = std::fs::read_to_string(path)?;
-    let bytes = Base64::decode(value.as_str()).map_err(|e| anyhow::anyhow!(e))?;
-    if let Some(flag) = bytes.first() {
-        if flag == &Ed25519SuiSignature::SCHEME.flag() {
-            let priv_key_bytes = bytes
-                .get(1 + Ed25519PublicKey::LENGTH..)
-                .ok_or_else(|| anyhow!("Invalid length"))?;
-            let sk = Ed25519PrivateKey::from_bytes(priv_key_bytes)?;
-            return Ok(<Ed25519KeyPair as From<Ed25519PrivateKey>>::from(sk));
-        }
+    let kp = SuiKeyPair::decode_base64(value.as_str()).map_err(|e| anyhow!(e))?;
+    if let SuiKeyPair::Ed25519(kp) = kp {
+        Ok(kp)
+    } else {
+        Err(anyhow!("Invalid scheme for network keypair"))
     }
-    Err(anyhow!("Invalid bytes"))
 }

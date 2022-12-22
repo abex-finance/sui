@@ -136,61 +136,56 @@ impl FromStr for SuiKeyPair {
 }
 
 impl EncodeDecodeBase64 for SuiKeyPair {
+    /// Encode a SuiKeyPair as `flag || pubkey || privkey` in Base64. The pubkey bytesare derived directly from privkey.
     fn encode_base64(&self) -> String {
         let mut bytes: Vec<u8> = Vec::new();
         match self {
             SuiKeyPair::Ed25519(kp) => {
-                let kp1 = kp.copy();
                 bytes.extend_from_slice(&[self.public().flag()]);
-                bytes.extend_from_slice(kp.public().as_ref());
-                bytes.extend_from_slice(kp1.private().as_ref());
+                bytes.extend_from_slice(Ed25519PublicKey::from(&kp.copy().private()).as_ref());
+                bytes.extend_from_slice(kp.copy().private().as_ref());
             }
             SuiKeyPair::Secp256k1(kp) => {
-                let kp1 = kp.copy();
                 bytes.extend_from_slice(&[self.public().flag()]);
-                bytes.extend_from_slice(kp.public().as_ref());
-                bytes.extend_from_slice(kp1.private().as_ref());
+                bytes.extend_from_slice(Secp256k1PublicKey::from(&kp.copy().private()).as_ref());
+                bytes.extend_from_slice(kp.copy().private().as_ref());
             }
             SuiKeyPair::Secp256r1(kp) => {
-                let kp1 = kp.copy();
                 bytes.extend_from_slice(&[self.public().flag()]);
-                bytes.extend_from_slice(kp.public().as_ref());
-                bytes.extend_from_slice(kp1.private().as_ref());
+                bytes.extend_from_slice(Secp256r1PublicKey::from(&kp.copy().private()).as_ref());
+                bytes.extend_from_slice(kp.copy().private().as_ref());
             }
         }
+        println!("ccbytes={:?}", bytes);
         Base64::encode(&bytes[..])
     }
 
+    /// Decode a SuiKeyPair from Base64 encoded `flag || pubkey || privkey` in Base64. Use the privkey bytes only to derive the pubkey and the full keypair.
     fn decode_base64(value: &str) -> Result<Self, eyre::Report> {
         let bytes = Base64::decode(value).map_err(|e| eyre::eyre!("{}", e.to_string()))?;
         match bytes.first() {
             Some(x) => {
                 if x == &Ed25519SuiSignature::SCHEME.flag() {
-                    let priv_key_bytes = bytes
-                        .get(1 + Ed25519PublicKey::LENGTH..)
-                        .ok_or_else(|| eyre::eyre!("Invalid length"))?;
-                    let sk = Ed25519PrivateKey::from_bytes(priv_key_bytes)?;
-                    Ok(SuiKeyPair::Ed25519(<Ed25519KeyPair as From<
-                        Ed25519PrivateKey,
-                    >>::from(sk)))
+                    let sk = Ed25519PrivateKey::from_bytes(
+                        bytes
+                            .get(1 + Ed25519PublicKey::LENGTH..)
+                            .ok_or_else(|| eyre::eyre!("Invalid length"))?,
+                    )?;
+                    Ok(SuiKeyPair::Ed25519(sk.into()))
                 } else if x == &Secp256k1SuiSignature::SCHEME.flag() {
                     let sk = Secp256k1PrivateKey::from_bytes(
                         bytes
                             .get(1 + Secp256k1PublicKey::LENGTH..)
                             .ok_or_else(|| eyre::eyre!("Invalid length"))?,
                     )?;
-                    Ok(SuiKeyPair::Secp256k1(<Secp256k1KeyPair as From<
-                        Secp256k1PrivateKey,
-                    >>::from(sk)))
+                    Ok(SuiKeyPair::Secp256k1(sk.into()))
                 } else if x == &Secp256r1SuiSignature::SCHEME.flag() {
                     let sk = Secp256r1PrivateKey::from_bytes(
                         bytes
                             .get(1 + Secp256r1PublicKey::LENGTH..)
                             .ok_or_else(|| eyre::eyre!("Invalid length"))?,
                     )?;
-                    Ok(SuiKeyPair::Secp256r1(<Secp256r1KeyPair as From<
-                        Secp256r1PrivateKey,
-                    >>::from(sk)))
+                    Ok(SuiKeyPair::Secp256r1(sk.into()))
                 } else {
                     Err(eyre::eyre!("Invalid flag byte"))
                 }

@@ -6,6 +6,7 @@
 
 use std::str::FromStr;
 
+use fastcrypto::traits::EncodeDecodeBase64;
 use move_binary_format::file_format;
 
 use crate::crypto::bcs_signable_test::{Bar, Foo};
@@ -311,7 +312,7 @@ fn test_authority_signature_serde_human_readable() {
     let sig = AuthoritySignature::new(&Foo("some data".to_string()), 0, &key);
     let serialized = serde_json::to_string(&sig).unwrap();
     assert_eq!(
-        format!(r#"{{"sig":"{}"}}"#, Base64::encode(sig.as_ref())),
+        format!(r#"{{"sig":"{}"}}"#, sig.encode_base64()),
         serialized
     );
     let deserialized: AuthoritySignature = serde_json::from_str(&serialized).unwrap();
