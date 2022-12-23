@@ -705,6 +705,7 @@ where
     }
 }
 
+// TODO: categorize all possible SuiErrors
 fn convert_to_quorum_driver_error_if_nonretryable(
     err: SuiError,
     tx_digest: &TransactionDigest,
