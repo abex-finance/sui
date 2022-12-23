@@ -116,8 +116,12 @@ pub struct Parameters {
 
     /// The maximum delay that the primary waits between generating two headers, even if the header
     /// did not reach `max_header_num_of_batches`.
-    #[serde(with = "duration_format")]
+    #[serde(
+        default = "Parameters::default_max_header_delay",
+        with = "duration_format"
+    )]
     pub max_header_delay: Duration,
+
     /// The depth of the garbage collection (Denominated in number of rounds).
     pub gc_depth: u64,
     /// The delay after which the synchronizer retries to send sync requests. Denominated in ms.
@@ -147,11 +151,15 @@ pub struct Parameters {
 
 impl Parameters {
     fn default_header_num_of_batches_threshold() -> usize {
-        32
+        1
     }
 
     fn default_max_header_num_of_batches() -> usize {
         1_000
+    }
+
+    fn default_max_header_delay() -> Duration {
+        Duration::from_secs(2)
     }
 }
 
