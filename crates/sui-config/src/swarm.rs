@@ -129,15 +129,17 @@ impl<'a> FullnodeConfigBuilder<'a> {
     }
 
     pub fn build(self) -> Result<NodeConfig, anyhow::Error> {
-        let protocol_key_pair: Arc<AuthorityKeyPair> =
-            Arc::new(get_key_pair_from_rng(&mut OsRng).1);
-        let worker_key_pair: Arc<NetworkKeyPair> = Arc::new(get_key_pair_from_rng(&mut OsRng).1);
-        let account_key_pair: Arc<SuiKeyPair> = Arc::new(
+        let protocol_key_pair: Option<Arc<AuthorityKeyPair>> =
+            Some(Arc::new(get_key_pair_from_rng(&mut OsRng).1));
+        let worker_key_pair: Option<Arc<NetworkKeyPair>> =
+            Some(Arc::new(get_key_pair_from_rng(&mut OsRng).1));
+        let account_key_pair: Option<Arc<SuiKeyPair>> = Some(Arc::new(
             get_key_pair_from_rng::<AccountKeyPair, _>(&mut OsRng)
                 .1
                 .into(),
-        );
-        let network_key_pair: Arc<NetworkKeyPair> = Arc::new(get_key_pair_from_rng(&mut OsRng).1);
+        ));
+        let network_key_pair: Option<Arc<NetworkKeyPair>> =
+            Some(Arc::new(get_key_pair_from_rng(&mut OsRng).1));
         let validator_configs = &self.network_config.validator_configs;
         let validator_config = &validator_configs[0];
 
@@ -164,7 +166,9 @@ impl<'a> FullnodeConfigBuilder<'a> {
             let seed_peers = validator_configs
                 .iter()
                 .map(|config| SeedPeer {
-                    peer_id: Some(anemo::PeerId(config.network_key_pair.public().0.to_bytes())),
+                    peer_id: Some(anemo::PeerId(
+                        config.network_key_pair().public().0.to_bytes(),
+                    )),
                     address: config.p2p_config.external_address.clone().unwrap(),
                 })
                 .collect();
@@ -188,6 +192,13 @@ impl<'a> FullnodeConfigBuilder<'a> {
             worker_key_pair,
             account_key_pair,
             network_key_pair,
+
+            // The file paths are not needed here because they are loaded to the values above.
+            protocol_key_pair_path: PathBuf::from(""),
+            worker_key_pair_path: PathBuf::from(""),
+            account_key_pair_path: PathBuf::from(""),
+            network_key_pair_path: PathBuf::from(""),
+
             db_path: db_path.join(dir_name),
             network_address,
             metrics_address: utils::available_local_socket_address(),

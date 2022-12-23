@@ -157,7 +157,7 @@ impl RosettaServerCommand {
                     info!("Using default node config from {path:?}");
                     path
                 });
-                let config = NodeConfig::load(&node_config)?;
+                let config = NodeConfig::load(&node_config)?.load_key_pairs()?;
                 let registry_service = metrics::start_prometheus_server(config.metrics_address);
                 // Staring a full node for the rosetta server.
                 let rpc_address = format!("http://127.0.0.1:{}", config.json_rpc_address.port());

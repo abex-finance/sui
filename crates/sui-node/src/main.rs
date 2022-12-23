@@ -33,8 +33,7 @@ struct Args {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
-    let mut config = NodeConfig::load(&args.config_path)?;
-
+    let mut config = NodeConfig::load(&args.config_path)?.load_key_pairs()?;
     let registry_service = metrics::start_prometheus_server(config.metrics_address);
     let prometheus_registry = registry_service.default_registry();
     info!(

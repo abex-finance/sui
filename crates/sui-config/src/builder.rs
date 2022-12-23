@@ -300,10 +300,17 @@ impl<R: rand::RngCore + rand::CryptoRng> ConfigBuilder<R> {
                 };
 
                 NodeConfig {
-                    protocol_key_pair: Arc::new(validator.genesis_info.key_pair),
-                    worker_key_pair: Arc::new(validator.genesis_info.worker_key_pair),
-                    account_key_pair: Arc::new(validator.genesis_info.account_key_pair),
-                    network_key_pair: Arc::new(validator.genesis_info.network_key_pair),
+                    protocol_key_pair: Some(Arc::new(validator.genesis_info.key_pair)),
+                    worker_key_pair: Some(Arc::new(validator.genesis_info.worker_key_pair)),
+                    account_key_pair: Some(Arc::new(validator.genesis_info.account_key_pair)),
+                    network_key_pair: Some(Arc::new(validator.genesis_info.network_key_pair)),
+
+                    // The file paths are not needed here because they are loaded to the values above.
+                    protocol_key_pair_path: PathBuf::from(""),
+                    worker_key_pair_path: PathBuf::from(""),
+                    account_key_pair_path: PathBuf::from(""),
+                    network_key_pair_path: PathBuf::from(""),
+
                     db_path,
                     network_address,
                     metrics_address: utils::available_local_socket_address(),

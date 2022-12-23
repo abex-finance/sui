@@ -7,6 +7,10 @@ validator_configs:
     worker-key-pair: fsz863qJR38mPjuvloaZBE4vbibFPgrwQXUa+OGTTNMfKnkBqELk02I7xhzhwXF9LnaOD9ct+DQa9WYVuRbwOA==
     account-key-pair: AJTkqEkxROnmliCMvtACWebdtW+Xm5HDKWdWCYW+YZCbZeUwqtiSP4IuiO1U/Br2sTVBQpkckD5caF+BanumitE=
     network-key-pair: KUrb+C2JL5zKk+XaKXpgLj08mCQegCCekpnR0SLAhTC+ODDLDFddhaGYhOUoOWrDb5Dh27EywDr6A1haMSoZgA==
+    protocol-key-pair-path: ""
+    worker-key-pair-path: ""
+    account-key-pair-path: ""
+    network-key-pair-path: ""
     db-path: /tmp/foo/
     network-address: ""
     json-rpc-address: "0.0.0.0:1"
@@ -55,6 +59,10 @@ validator_configs:
     worker-key-pair: pPBKumCrkESEmAiG/7UfSMyIlAyKCQaysBb0RA9oxIjUlkEGAVZiydeHbfhB9gYL7kzDBgkDW+FtKKCCdkKJrw==
     account-key-pair: ACxHMS0iupHOTDgHm2HYa+f/ft9OjvxBk5+C7f/APsXUezeV+HwuWFqdYT/NOM6oMWQ2IMvai7GOMn5YNPn+FWA=
     network-key-pair: 25MXKYkbDqXWtIZXl27gbhE44t3hp1Qi3HFWHLfWWc02Qa/dLNgUCurzqAJUBNJX3l41lsEQSc4BU7HWKBcBww==
+    protocol-key-pair-path: ""
+    worker-key-pair-path: ""
+    account-key-pair-path: ""
+    network-key-pair-path: ""
     db-path: /tmp/foo/
     network-address: ""
     json-rpc-address: "0.0.0.0:1"
@@ -103,6 +111,10 @@ validator_configs:
     worker-key-pair: 1Dh27FOw52h9QAd9IijyRq42PtJGYtmCZ2RvXYPDEXq1VgdNLiQC+WWvRST+Sy8o3vw/3KhkD6LkKgSI3cA21A==
     account-key-pair: ANoED1MVNxaUbvcp8K7QXQLx/JQAamix308cQdCKwKu2YYJojLU7C+8u2vatwd7CUkkEgsvOGsRqjhCYXQPZRPM=
     network-key-pair: oUiBY+hNlv3/NS7/U/zAW3EMNi45uTXGv9BrFnYfjyL3DKDUcV6AMIaYPpJDgVBG5KinqsQjwmcuxI+1bSHPXg==
+    protocol-key-pair-path: ""
+    worker-key-pair-path: ""
+    account-key-pair-path: ""
+    network-key-pair-path: ""
     db-path: /tmp/foo/
     network-address: ""
     json-rpc-address: "0.0.0.0:1"
@@ -151,6 +163,10 @@ validator_configs:
     worker-key-pair: EHX7HidEWjJgbesq5yxWacBkHUx/wALB90Mm8SiaEZbxwBkF+0PK7tSN8SKVyFzxOP/rMtxd+udylT/0hBBhPA==
     account-key-pair: AEgi5sKIaNYxb+8Vr0MKLUWpdrRfjLPiCeYy4hQTtSBHkXLa5CsQhIUzlhFBEFTP1eKxJ6lBGRYzNkOjrDamlU8=
     network-key-pair: jQ5isfeCs5cO8kQfRoNiE6Ex250niEtXCH7U4Y3Khd6oQCQy7u0KEQ5fzh2GiqaHnTSuv58CtSk5zSJ3oCPwCA==
+    protocol-key-pair-path: ""
+    worker-key-pair-path: ""
+    account-key-pair-path: ""
+    network-key-pair-path: ""
     db-path: /tmp/foo/
     network-address: ""
     json-rpc-address: "0.0.0.0:1"
@@ -199,6 +215,10 @@ validator_configs:
     worker-key-pair: UkqY1k2SrJLzldSoAqzDZp1vudV6MzAZqojam0XY2ZMLuRQO9Y+pqy4+d18HnybxccBJ0Peox1wNntUCw83jtg==
     account-key-pair: AB86G1ccGVVMFPrc3src2g3fB3NMyEcsS5pzI+Yr6cyKJ0hDQggulPK2ZTpGNWrch+vg73OQ9lWfRXu9uN+Qo88=
     network-key-pair: UqrQzLuBAdMMbnxVAxgiaFTXz6PaV70e0XTyeF6Fu8oK9Zu9eLjNEPIBuXXKvlrVfhuwWWfvZo8RITUz+oGi4A==
+    protocol-key-pair-path: ""
+    worker-key-pair-path: ""
+    account-key-pair-path: ""
+    network-key-pair-path: ""
     db-path: /tmp/foo/
     network-address: ""
     json-rpc-address: "0.0.0.0:1"
@@ -247,6 +267,10 @@ validator_configs:
     worker-key-pair: Hloy4pnf8pWEHGP+4OFsXz56bLdIJhkD2O+OdKMqCA7wMp6899Qoe0RPBXQsG+CDt54MPp/xImMAyKkV3ZKPbQ==
     account-key-pair: AHH6sQEDMUJH0Spm5nDLrKbFAUcBHYL/VIORf2ervCbbpvMScjoMR/DaN0M5IOxS2VpGC59N6kv6gDm63ufLQ5w=
     network-key-pair: tPu3gzoWoFbHbnuaUp1whWKFV7mtDVfOtTHDWWR2ZoXf5b5cvKkChqZePWeh13cAvg+1CyvrtPB1cQOBhwx4vw==
+    protocol-key-pair-path: ""
+    worker-key-pair-path: ""
+    account-key-pair-path: ""
+    network-key-pair-path: ""
     db-path: /tmp/foo/
     network-address: ""
     json-rpc-address: "0.0.0.0:1"
@@ -295,6 +319,10 @@ validator_configs:
     worker-key-pair: 5RWlYF22jS9i76zLl8jP2D3D8GC5ht+IP1dWUBGZxi993DP7RJ8jr9I9OXm/Mf3nxvRozBZQnRUoPY8tvhMCGA==
     account-key-pair: AKHC3Gr1i6u+zAK1Yj1vys0hB83qha4jRCfzoHqLAo6FQ5EkvCcy5cw1JKStwSs0v/QByW0I8JXCqdnagoupCMg=
     network-key-pair: +EEIX4hOQB79xqDr8Cp0UGNNC4sEE849/ORTGY1iwxe4WYJPZ9nNye8f+ObULC/wnR4X87tIAH4wvXsZ8OKWwQ==
+    protocol-key-pair-path: ""
+    worker-key-pair-path: ""
+    account-key-pair-path: ""
+    network-key-pair-path: ""
     db-path: /tmp/foo/
     network-address: ""
     json-rpc-address: "0.0.0.0:1"

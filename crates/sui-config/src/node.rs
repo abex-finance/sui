@@ -13,9 +13,11 @@ use std::collections::BTreeMap;
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
+use sui_keys::keypair_file::{
+    read_authority_keypair_from_file, read_keypair_from_file, read_network_keypair_from_file,
+};
 use sui_types::base_types::SuiAddress;
 use sui_types::committee::StakeUnit;
-use sui_types::crypto::AccountKeyPair;
 use sui_types::crypto::AuthorityKeyPair;
 use sui_types::crypto::AuthorityPublicKeyBytes;
 use sui_types::crypto::KeypairTraits;
@@ -33,19 +35,38 @@ pub const DEFAULT_GRPC_CONCURRENCY_LIMIT: usize = 20000000000;
 #[serde(rename_all = "kebab-case")]
 pub struct NodeConfig {
     /// The keypair that is used to deal with consensus transactions
-    #[serde(default = "default_key_pair")]
-    #[serde_as(as = "Arc<KeyPairBase64>")]
-    pub protocol_key_pair: Arc<AuthorityKeyPair>,
+    #[serde(default = "default_key_pair", skip_serializing_if = "Option::is_none")]
+    #[serde_as(as = "Option<Arc<KeyPairBase64>>")]
+    pub protocol_key_pair: Option<Arc<AuthorityKeyPair>>,
     /// The keypair that is used by the narwhal worker.
-    #[serde(default = "default_worker_key_pair")]
-    #[serde_as(as = "Arc<KeyPairBase64>")]
-    pub worker_key_pair: Arc<NetworkKeyPair>,
+    #[serde(
+        default = "default_worker_key_pair",
+        skip_serializing_if = "Option::is_none"
+    )]
+    #[serde_as(as = "Option<Arc<KeyPairBase64>>")]
+    pub worker_key_pair: Option<Arc<NetworkKeyPair>>,
     /// The keypair that the authority uses to receive payments
-    #[serde(default = "default_sui_key_pair")]
-    pub account_key_pair: Arc<SuiKeyPair>,
-    #[serde(default = "default_worker_key_pair")]
-    #[serde_as(as = "Arc<KeyPairBase64>")]
-    pub network_key_pair: Arc<NetworkKeyPair>,
+    #[serde(
+        default = "default_sui_key_pair",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub account_key_pair: Option<Arc<SuiKeyPair>>,
+    #[serde(
+        default = "default_worker_key_pair",
+        skip_serializing_if = "Option::is_none"
+    )]
+    #[serde_as(as = "Option<Arc<KeyPairBase64>>")]
+    pub network_key_pair: Option<Arc<NetworkKeyPair>>,
+
+    /// File path to read the protocol_key_pair from.
+    pub protocol_key_pair_path: PathBuf,
+    /// File path to read the worker_key_pair from.
+    pub worker_key_pair_path: PathBuf,
+    /// File path to read the account_key_pair from.
+    pub account_key_pair_path: PathBuf,
+    /// File path to read the network_key_pair from.
+    pub network_key_pair_path: PathBuf,
+
     pub db_path: PathBuf,
     #[serde(default = "default_grpc_address")]
     pub network_address: Multiaddr,
@@ -86,16 +107,16 @@ pub struct NodeConfig {
     pub genesis: Genesis,
 }
 
-fn default_key_pair() -> Arc<AuthorityKeyPair> {
-    Arc::new(sui_types::crypto::get_key_pair().1)
+fn default_key_pair() -> Option<Arc<AuthorityKeyPair>> {
+    None
 }
 
-fn default_worker_key_pair() -> Arc<NetworkKeyPair> {
-    Arc::new(sui_types::crypto::get_key_pair().1)
+fn default_worker_key_pair() -> Option<Arc<NetworkKeyPair>> {
+    None
 }
 
-fn default_sui_key_pair() -> Arc<SuiKeyPair> {
-    Arc::new((sui_types::crypto::get_key_pair::<AccountKeyPair>().1).into())
+fn default_sui_key_pair() -> Option<Arc<SuiKeyPair>> {
+    None
 }
 
 fn default_grpc_address() -> Multiaddr {
@@ -137,24 +158,51 @@ pub fn bool_true() -> bool {
 impl Config for NodeConfig {}
 
 impl NodeConfig {
+    pub fn load_key_pairs(mut self) -> Result<Self> {
+        let path = &self.protocol_key_pair_path;
+        let kp = read_authority_keypair_from_file(path)
+            .unwrap_or_else(|e| panic!("Invalid protocol key at path {:?} {:?}", path, e));
+        self.protocol_key_pair = Some(Arc::new(kp));
+
+        let path = &self.worker_key_pair_path;
+        let kp = read_network_keypair_from_file(path)
+            .unwrap_or_else(|e| panic!("Invalid worker key at path {:?} {:?}", path, e));
+        self.worker_key_pair = Some(Arc::new(kp));
+
+        let path = &self.network_key_pair_path;
+        let kp = read_network_keypair_from_file(path)
+            .unwrap_or_else(|e| panic!("Invalid network key at path {:?} {:?}", path, e));
+        self.network_key_pair = Some(Arc::new(kp));
+
+        let path = &self.account_key_pair_path;
+        let kp = read_keypair_from_file(path)
+            .unwrap_or_else(|e| panic!("Invalid account key at path {:?} {:?}", path, e));
+        self.account_key_pair = Some(Arc::new(kp));
+        Ok(self)
+    }
+
     pub fn protocol_key_pair(&self) -> &AuthorityKeyPair {
-        &self.protocol_key_pair
+        self.protocol_key_pair.as_ref().unwrap()
     }
 
     pub fn worker_key_pair(&self) -> &NetworkKeyPair {
-        &self.worker_key_pair
+        self.worker_key_pair.as_ref().unwrap()
     }
 
     pub fn network_key_pair(&self) -> &NetworkKeyPair {
-        &self.network_key_pair
+        self.network_key_pair.as_ref().unwrap()
+    }
+
+    pub fn account_key_pair(&self) -> &SuiKeyPair {
+        self.account_key_pair.as_ref().unwrap()
     }
 
     pub fn protocol_public_key(&self) -> AuthorityPublicKeyBytes {
-        self.protocol_key_pair.public().into()
+        self.protocol_key_pair().public().into()
     }
 
     pub fn sui_address(&self) -> SuiAddress {
-        (&self.account_key_pair.public()).into()
+        (&self.account_key_pair().public()).into()
     }
 
     pub fn db_path(&self) -> &Path {
@@ -348,6 +396,14 @@ enum GenesisLocation {
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
+    use rand::{rngs::StdRng, SeedableRng};
+    use sui_keys::keypair_file::{write_authority_keypair_to_file, write_keypair_to_file};
+    use sui_types::crypto::{
+        get_key_pair_from_rng, AccountKeyPair, AuthorityKeyPair, NetworkKeyPair, SuiKeyPair,
+    };
+
     use super::Genesis;
     use crate::{genesis, NodeConfig};
 
@@ -392,5 +448,47 @@ mod tests {
         const TEMPLATE: &str = include_str!("../data/fullnode-template.yaml");
 
         let _template: NodeConfig = serde_yaml::from_str(TEMPLATE).unwrap();
+    }
+
+    #[test]
+    fn load_key_pairs_to_node_config() {
+        let protocol_key_pair: AuthorityKeyPair =
+            get_key_pair_from_rng(&mut StdRng::from_seed([0; 32])).1;
+        let worker_key_pair: NetworkKeyPair =
+            get_key_pair_from_rng(&mut StdRng::from_seed([0; 32])).1;
+        let account_key_pair: SuiKeyPair =
+            get_key_pair_from_rng::<AccountKeyPair, _>(&mut StdRng::from_seed([0; 32]))
+                .1
+                .into();
+        let network_key_pair: NetworkKeyPair =
+            get_key_pair_from_rng(&mut StdRng::from_seed([0; 32])).1;
+
+        write_authority_keypair_to_file(&protocol_key_pair, &PathBuf::from("protocol.key"))
+            .unwrap();
+        write_keypair_to_file(
+            &SuiKeyPair::Ed25519(worker_key_pair),
+            &PathBuf::from("worker.key"),
+        )
+        .unwrap();
+        write_keypair_to_file(
+            &SuiKeyPair::Ed25519(network_key_pair),
+            &PathBuf::from("network.key"),
+        )
+        .unwrap();
+        write_keypair_to_file(&account_key_pair, &PathBuf::from("account.key")).unwrap();
+
+        const TEMPLATE: &str = include_str!("../data/fullnode-template.yaml");
+        let template: NodeConfig = serde_yaml::from_str(TEMPLATE).unwrap();
+        assert!(template.protocol_key_pair.is_none());
+        assert!(template.account_key_pair.is_none());
+        assert!(template.worker_key_pair.is_none());
+        assert!(template.network_key_pair.is_none());
+
+        let res = template.load_key_pairs().unwrap();
+
+        assert!(res.protocol_key_pair.is_some());
+        assert!(res.account_key_pair.is_some());
+        assert!(res.worker_key_pair.is_some());
+        assert!(res.network_key_pair.is_some());
     }
 }
