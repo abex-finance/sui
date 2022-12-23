@@ -1984,6 +1984,7 @@ pub struct DevInspectResults {
 }
 
 #[derive(Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(rename = "SuiExecutionResult", rename_all = "camelCase")]
 pub struct SuiExecutionResult {
     /// The value of any arguments that were mutably borrowed.
     /// Non-mut borrowed values are not included
@@ -2030,6 +2031,15 @@ impl DevInspectResults {
         };
         Ok(Self { effects, results })
     }
+}
+
+#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize, JsonSchema)]
+pub enum SuiTransactionBuilderMode {
+    /// Regular Sui Transactions that are committed on chain
+    Commit,
+    /// Simulated transaction that allows calling any Move function with
+    /// arbitrary values.
+    DevInspect,
 }
 
 #[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize, JsonSchema)]

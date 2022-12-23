@@ -165,6 +165,7 @@ async fn test_move_call() -> Result<(), anyhow::Error> {
             json_args,
             Some(gas.object_id),
             10_000,
+            None,
         )
         .await?;
 
@@ -430,6 +431,7 @@ async fn test_get_total_supply() -> Result<(), anyhow::Error> {
             ],
             Some(gas.object_id),
             10_000,
+            None,
         )
         .await?;
 
