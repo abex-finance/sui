@@ -7,11 +7,12 @@ use mysten_metrics::spawn_logged_monitored_task;
 use network::{CancelOnDropHandler, ReliableNetwork};
 use std::{collections::BTreeMap, sync::Arc};
 use tap::{TapFallible, TapOptional};
-use tokio::{sync::watch, task::JoinHandle};
+use tokio::task::JoinHandle;
 use tracing::{debug, error, info, warn};
 use types::{
     metered_channel::{Receiver, Sender},
-    Certificate, ReconfigureNotification, Round, WorkerReconfigureMessage,
+    Certificate, PreSubscribedBroadcastSender, ReconfigureNotification, Round,
+    WorkerReconfigureMessage,
 };
 
 /// Receives the highest round reached by consensus and update it for all tasks.
@@ -27,7 +28,7 @@ pub struct StateHandler {
     /// Receives notifications to reconfigure the system.
     rx_state_handler: Receiver<ReconfigureNotification>,
     /// Channel to signal committee changes.
-    tx_reconfigure: watch::Sender<ReconfigureNotification>,
+    tx_shutdown: PreSubscribedBroadcastSender,
     /// A channel to update the committed rounds
     tx_commited_own_headers: Option<Sender<(Round, Vec<Round>)>>,
 
@@ -42,7 +43,7 @@ impl StateHandler {
         worker_cache: SharedWorkerCache,
         rx_committed_certificates: Receiver<(Round, Vec<Certificate>)>,
         rx_state_handler: Receiver<ReconfigureNotification>,
-        tx_reconfigure: watch::Sender<ReconfigureNotification>,
+        tx_shutdown: PreSubscribedBroadcastSender,
         tx_commited_own_headers: Option<Sender<(Round, Vec<Round>)>>,
         network: anemo::Network,
     ) -> JoinHandle<()> {
@@ -54,7 +55,7 @@ impl StateHandler {
                     worker_cache,
                     rx_committed_certificates,
                     rx_state_handler,
-                    tx_reconfigure,
+                    tx_shutdown,
                     tx_commited_own_headers,
                     network,
                 }
@@ -168,11 +169,11 @@ impl StateHandler {
                     };
 
                     // Notify all other tasks.
-                    self.tx_reconfigure
-                        .send(message)
-                        .expect("Reconfigure channel dropped");
+                    self.tx_shutdown
+                        .send()
+                        .expect("Shutdown channel dropped");
 
-                    warn!("Waiting to broadcast reconfigure message to workers");
+                    warn!("Waiting to broadcast shutdown message to workers");
 
                     // wait for all the workers to eventually receive the message
                     // TODO: this request will be removed https://mysten.atlassian.net/browse/SUI-984
@@ -191,9 +192,9 @@ impl StateHandler {
 
                         warn!("Network has shutdown");
 
-                        self.tx_reconfigure.closed().await;
+                        // self.tx_shutdown.closed().await;
 
-                        warn!("All reconfiguration receivers dropped");
+                        //warn!("All reconfiguration receivers dropped");
 
                         return;
                     }

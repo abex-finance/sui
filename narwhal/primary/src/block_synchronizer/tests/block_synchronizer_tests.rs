@@ -41,8 +41,7 @@ async fn test_successful_headers_synchronization() {
     let name = primary.public_key();
     let network_key = primary.network_keypair().copy().private().0.to_bytes();
 
-    let (_tx_reconfigure, rx_reconfigure) =
-        watch::channel(ReconfigureNotification::NewEpoch(committee.clone()));
+    let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
     let (tx_commands, rx_block_synchronizer_commands) = test_utils::test_channel!(10);
 
     // AND some blocks (certificates)
@@ -82,7 +81,7 @@ async fn test_successful_headers_synchronization() {
         name.clone(),
         committee.clone(),
         worker_cache.clone(),
-        rx_reconfigure,
+        tx_shutdown.subscribe(),
         rx_block_synchronizer_commands,
         network.clone(),
         payload_store.clone(),
@@ -184,8 +183,7 @@ async fn test_successful_payload_synchronization() {
     let name = primary.public_key();
     let network_key = primary.network_keypair().copy().private().0.to_bytes();
 
-    let (_tx_reconfigure, rx_reconfigure) =
-        watch::channel(ReconfigureNotification::NewEpoch(committee.clone()));
+    let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
     let (tx_commands, rx_block_synchronizer_commands) = test_utils::test_channel!(10);
 
     // AND some blocks (certificates)
@@ -224,7 +222,7 @@ async fn test_successful_payload_synchronization() {
         name.clone(),
         committee.clone(),
         worker_cache.clone(),
-        rx_reconfigure,
+        tx_shutdown.subscribe(),
         rx_block_synchronizer_commands,
         network.clone(),
         payload_store.clone(),
@@ -365,8 +363,7 @@ async fn test_timeout_while_waiting_for_certificates() {
     let name = primary.public_key();
     let network_key = primary.network_keypair().copy().private().0.to_bytes();
 
-    let (_tx_reconfigure, rx_reconfigure) =
-        watch::channel(ReconfigureNotification::NewEpoch(committee.clone()));
+    let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
     let (tx_commands, rx_block_synchronizer_commands) = test_utils::test_channel!(10);
 
     // AND some random block digests
@@ -403,7 +400,7 @@ async fn test_timeout_while_waiting_for_certificates() {
         name.clone(),
         committee.clone(),
         worker_cache.clone(),
-        rx_reconfigure,
+        tx_shutdown.subscribe(),
         rx_block_synchronizer_commands,
         network,
         payload_store.clone(),

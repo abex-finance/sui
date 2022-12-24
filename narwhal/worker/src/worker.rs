@@ -278,12 +278,13 @@ impl Worker {
             id, network_admin_server_base_port
         );
 
-        let admin_handles = network::admin::start_admin_server(
-            network_admin_server_base_port,
-            network.clone(),
-            rx_reconfigure.clone(),
-            None,
-        );
+        // TODO: bring this back
+        // let admin_handles = network::admin::start_admin_server(
+        //     network_admin_server_base_port,
+        //     network.clone(),
+        //     rx_reconfigure.clone(),
+        //     None,
+        // );
 
         let primary_connector_handle = PrimaryConnector::spawn(
             primary_network_key,
@@ -321,7 +322,7 @@ impl Worker {
             connection_monitor_handle,
             network_shutdown_handle,
         ];
-        handles.extend(admin_handles);
+        // handles.extend(admin_handles); TODO: Bring this back
         handles.extend(client_flow_handles);
         handles
     }

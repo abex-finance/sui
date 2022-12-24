@@ -17,7 +17,8 @@ use storage::NodeStorage;
 use test_utils::{ensure_test_environment, temp_dir, CommitteeFixture};
 use tokio::sync::watch;
 use tracing::info;
-use types::ReconfigureNotification;
+use narwhal_primary::NUM_SHUTDOWN_RECEIVERS;
+use types::{PreSubscribedBroadcastSender, ReconfigureNotification};
 use worker::TrivialTransactionValidator;
 
 /// The epoch changes but the stake distribution and network addresses stay the same.
@@ -62,7 +63,7 @@ async fn test_simple_epoch_change() {
         let (_tx_consensus_round_updates, rx_consensus_round_updates) = watch::channel(0);
 
         let initial_committee = ReconfigureNotification::NewEpoch(committee_0.clone());
-        let (tx_reconfigure, _rx_reconfigure) = watch::channel(initial_committee);
+        let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
 
         let store = NodeStorage::reopen(temp_dir());
         let registry = Registry::new();
@@ -85,7 +86,7 @@ async fn test_simple_epoch_change() {
             rx_consensus_round_updates,
             /* dag */ None,
             NetworkModel::Asynchronous,
-            tx_reconfigure,
+            tx_shutdown,
             /* tx_committed_certificates */ tx_feedback,
             &registry,
             None,
@@ -206,7 +207,7 @@ async fn test_partial_committee_change() {
         let (_tx_consensus_round_updates, rx_consensus_round_updates) = watch::channel(0);
 
         let initial_committee = ReconfigureNotification::NewEpoch(committee_0.clone());
-        let (tx_reconfigure, _rx_reconfigure) = watch::channel(initial_committee);
+        let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
 
         let store = NodeStorage::reopen(temp_dir());
 
@@ -228,7 +229,7 @@ async fn test_partial_committee_change() {
             rx_consensus_round_updates,
             /* dag */ None,
             NetworkModel::Asynchronous,
-            tx_reconfigure,
+            tx_shutdown,
             /* tx_committed_certificates */ tx_feedback,
             &Registry::new(),
             None,
@@ -296,7 +297,7 @@ async fn test_partial_committee_change() {
         let (_tx_consensus_round_updates, rx_consensus_round_updates) = watch::channel(0);
 
         let initial_committee = ReconfigureNotification::NewEpoch(committee_1.clone());
-        let (tx_reconfigure, _rx_reconfigure) = watch::channel(initial_committee);
+        let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
 
         let store = NodeStorage::reopen(temp_dir());
 
@@ -318,7 +319,7 @@ async fn test_partial_committee_change() {
             rx_consensus_round_updates,
             /* dag */ None,
             NetworkModel::Asynchronous,
-            tx_reconfigure,
+            tx_shutdown,
             /* tx_committed_certificates */ tx_feedback,
             &Registry::new(),
             None,
@@ -377,7 +378,7 @@ async fn test_restart_with_new_committee_change() {
         let (_tx_consensus_round_updates, rx_consensus_round_updates) = watch::channel(0);
 
         let initial_committee = ReconfigureNotification::NewEpoch(committee_0.clone());
-        let (tx_reconfigure, _rx_reconfigure) = watch::channel(initial_committee);
+        let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
 
         let store = NodeStorage::reopen(temp_dir());
 
@@ -399,7 +400,7 @@ async fn test_restart_with_new_committee_change() {
             rx_consensus_round_updates,
             /* dag */ None,
             NetworkModel::Asynchronous,
-            tx_reconfigure,
+            tx_shutdown,
             /* tx_committed_certificates */ tx_feedback,
             &Registry::new(),
             None,
@@ -467,7 +468,7 @@ async fn test_restart_with_new_committee_change() {
             let (_tx_consensus_round_updates, rx_consensus_round_updates) = watch::channel(0);
 
             let initial_committee = ReconfigureNotification::NewEpoch(new_committee.clone());
-            let (tx_reconfigure, _rx_reconfigure) = watch::channel(initial_committee);
+            let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
 
             let store = NodeStorage::reopen(temp_dir());
 
@@ -489,7 +490,7 @@ async fn test_restart_with_new_committee_change() {
                 rx_consensus_round_updates,
                 /* dag */ None,
                 NetworkModel::Asynchronous,
-                tx_reconfigure,
+                tx_shutdown,
                 /* tx_committed_certificates */ tx_feedback,
                 &Registry::new(),
                 None,
@@ -571,7 +572,7 @@ async fn test_simple_committee_update() {
         let (_tx_consensus_round_updates, rx_consensus_round_updates) = watch::channel(0);
 
         let initial_committee = ReconfigureNotification::NewEpoch(committee_0.clone());
-        let (tx_reconfigure, _rx_reconfigure) = watch::channel(initial_committee);
+        let tx_shutdown = PreSubscribedBroadcastSender::new(NUM_SHUTDOWN_RECEIVERS);
 
         let store = NodeStorage::reopen(temp_dir());
 
@@ -593,7 +594,7 @@ async fn test_simple_committee_update() {
             rx_consensus_round_updates,
             /* dag */ None,
             NetworkModel::Asynchronous,
-            tx_reconfigure,
+            tx_shutdown,
             /* tx_committed_certificates */ tx_feedback,
             &Registry::new(),
             None,
