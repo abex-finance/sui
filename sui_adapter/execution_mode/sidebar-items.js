@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["DevInspect","WARNING! Using this mode will bypass all normal checks around Move entry functions! This includes the various rules for function arguments, meaning any object can be created just from BCS bytes!"],["Normal",""]],"trait":[["ExecutionMode",""]],"type":[["ExecutionResult",""],["TransactionIndex",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["ChainId","Note: u7 in a u8 is uleb-compatible, and any usage of this should be aware that this field maybe updated to be uleb64 in the future"]]};

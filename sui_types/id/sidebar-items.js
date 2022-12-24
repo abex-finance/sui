@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["ID_STRUCT_NAME",""],["OBJECT_MODULE_NAME",""],["UID_STRUCT_NAME",""]],"struct":[["ID","Rust version of the Move sui::object::ID type"],["UID","Rust version of the Move sui::object::Info type"]]};

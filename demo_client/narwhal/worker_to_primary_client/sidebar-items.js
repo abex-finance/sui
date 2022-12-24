@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"opaque":[["",""]],"struct":[["WorkerToPrimaryClient","The worker-to-primary interface"]]};

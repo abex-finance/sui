@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["DynamicFieldType",""]],"fn":[["is_dynamic_object",""]],"struct":[["DynamicFieldInfo",""]]};

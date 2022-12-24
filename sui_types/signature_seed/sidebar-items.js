@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["SEED_LENGTH","The length of a `secret crypto seed`, in bytes."]],"struct":[["SignatureSeed","A secret seed required for various cryptographic purposes, i.e., deterministic key derivation."]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["commit_transactions",""],["read_transactions",""],["transaction_response_to_new_transaction",""]],"struct":[["NewTransaction",""],["Transaction",""]]};

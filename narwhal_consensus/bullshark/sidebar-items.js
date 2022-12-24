@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Bullshark",""],["LastRound","LastRound is a helper struct to keep necessary info around the leader election on the last election round. When both the leader_found = true & leader_has_support = true then we know that we do have a “successful” leader election and consequently a commit."]]};

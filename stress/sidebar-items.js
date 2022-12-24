@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["RunSpec",""]],"fn":[["main","To spin up a local cluster and direct some load at it with 50/50 shared and owned traffic, use it something like:"]],"struct":[["Opts",""]]};

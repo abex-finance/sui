@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["AccountConfig",""],["GenesisConfig",""],["ObjectConfig",""],["ObjectConfigRange",""],["ValidatorConfigInfo",""],["ValidatorGenesisInfo",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["WritePathPendingTransactionLog",""],["WritePathPendingTransactionTableConfigurator","Create config structs for configuring DBMap tables"],["WritePathPendingTransactionTableReadOnly","Create an intermediate struct used to open the DBMap tables in secondary mode This is only used internally"]],"type":[["IsFirstRecord",""]]};

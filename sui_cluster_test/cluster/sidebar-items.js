@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["new_wallet_context_from_cluster",""]],"struct":[["ClusterFactory",""],["LocalNewCluster","Represents a local Cluster which starts per cluster test run."],["RemoteRunningCluster","Represents an up and running cluster deployed remotely."]],"trait":[["Cluster","Cluster Abstraction"]]};

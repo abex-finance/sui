@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["sui_rpc_doc",""]],"mod":[["api",""],["bcs_api",""],["coin_api",""],["error",""],["event_api",""],["read_api",""],["streaming_api",""],["transaction_builder_api",""],["transaction_execution_api",""]],"struct":[["JsonRpcServerBuilder",""],["ServerHandle","Server handle."]],"trait":[["SuiRpcModule",""]]};

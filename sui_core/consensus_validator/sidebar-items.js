@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["SuiTxValidator","Allows verifying the validity of transactions"],["SuiTxValidatorMetrics",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["commit_packages_from_events",""]],"struct":[["NewPackage",""],["Package",""]]};

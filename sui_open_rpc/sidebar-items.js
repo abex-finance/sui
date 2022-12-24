@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["ContentDescriptor",""],["Example",""],["ExamplePairing",""],["Module",""],["Project","OPEN-RPC documentation following the OpenRPC specification https://spec.open-rpc.org The implementation is partial, only required fields and subset of optional fields in the specification are implemented catered to Sui’s need."],["RpcModuleDocBuilder",""]]};

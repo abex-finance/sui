@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["tbls_ids","Modules for working with threshold BLS (tBLS), needed for the randomness beacon. Assignment of IDs to validators."]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["test_staking_pool",""],["test_sui_system_state",""],["test_validatdor_metadata",""],["test_validator",""]]};

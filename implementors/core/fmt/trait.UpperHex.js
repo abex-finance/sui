@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"sui_types":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.UpperHex.html\" title=\"trait core::fmt::UpperHex\">UpperHex</a> for <a class=\"struct\" href=\"sui_types/base_types/struct.SuiAddress.html\" title=\"struct sui_types::base_types::SuiAddress\">SuiAddress</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.UpperHex.html\" title=\"trait core::fmt::UpperHex\">UpperHex</a> for <a class=\"struct\" href=\"sui_types/base_types/struct.ObjectID.html\" title=\"struct sui_types::base_types::ObjectID\">ObjectID</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

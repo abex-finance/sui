@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"attr":[["open_rpc","Add a OpenRpc struct and implementation providing access to Open RPC doc builder. This proc macro must be use in conjunction with `jsonrpsee_proc_macro::rpc`"]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"opaque":[["",""]],"struct":[["ProposerClient","/ The API that hosts the endpoints that should be used to help / proposing a block."]]};

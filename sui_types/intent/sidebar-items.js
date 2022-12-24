@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["AppId",""],["IntentScope",""],["IntentVersion",""]],"struct":[["Intent",""],["IntentMessage",""],["PersonalMessage",""]],"trait":[["SecureIntent",""]]};

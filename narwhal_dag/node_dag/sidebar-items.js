@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["NodeDagError",""]],"trait":[["Affiliated","A trait marking the minimum information we need to sort out the value for a node:"]]};

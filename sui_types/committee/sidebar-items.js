@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Committee",""],["CommitteeWithNetAddresses",""]],"type":[["CommitteeDigest",""],["EpochId",""],["StakeUnit",""]]};

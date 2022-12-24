@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["GetCheckpointSummaryRequest",""]],"mod":[["test_utils",""]],"struct":[["Builder",""],["Handle","A handle to the StateSync subsystem."],["StateSyncClient",""],["StateSyncServer",""],["UnstartedStateSync",""]],"trait":[["StateSync","Generated trait containing RPC methods that should be implemented for use with StateSyncServer."]]};

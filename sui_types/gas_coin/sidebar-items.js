@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["GAS_MODULE_NAME",""],["GAS_STRUCT_NAME",""]],"struct":[["GAS",""],["GasCoin","Rust version of the Move sui::coin::CoinSui::sui::SUI type"]]};

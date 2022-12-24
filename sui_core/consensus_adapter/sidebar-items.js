@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["ConsensusAdapter","Submit Sui certificates to the consensus."],["ConsensusAdapterMetrics",""]],"trait":[["SubmitToConsensus",""]],"type":[["OptArcConsensusAdapterMetrics",""]]};

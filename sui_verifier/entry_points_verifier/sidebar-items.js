@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["RESOLVED_ASCII_STR",""],["RESOLVED_STD_OPTION",""],["RESOLVED_SUI_ID",""],["RESOLVED_UTF8_STR",""]],"fn":[["is_object",""],["is_object_vector",""],["is_tx_context",""],["verify_module","Checks valid rules rules for entry points, both for module initialization and transactions"]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["EXAMPLE_NFT_DESCRIPTION",""],["EXAMPLE_NFT_NAME",""],["EXAMPLE_NFT_URL",""]],"enum":[["SuiClientCommandResult",""],["SuiClientCommands",""]],"fn":[["call_move",""]],"struct":[["SwitchResponse",""],["WalletContext",""]]};

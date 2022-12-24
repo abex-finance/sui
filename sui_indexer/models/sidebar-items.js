@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["address_logs",""],["addresses",""],["error_logs",""],["event_logs",""],["events",""],["object_logs",""],["objects",""],["package_logs",""],["packages",""],["transaction_logs",""],["transactions",""]]};

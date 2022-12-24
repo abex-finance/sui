@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"narwhal_crypto":[],
+"sui_types":[["impl Signer&lt;<a class=\"enum\" href=\"sui_types/crypto/enum.Signature.html\" title=\"enum sui_types::crypto::Signature\">Signature</a>&gt; for <a class=\"enum\" href=\"sui_types/crypto/enum.SuiKeyPair.html\" title=\"enum sui_types::crypto::SuiKeyPair\">SuiKeyPair</a>"],["impl Signer&lt;<a class=\"enum\" href=\"sui_types/crypto/enum.Signature.html\" title=\"enum sui_types::crypto::Signature\">Signature</a>&gt; for Ed25519KeyPair"],["impl Signer&lt;<a class=\"enum\" href=\"sui_types/crypto/enum.Signature.html\" title=\"enum sui_types::crypto::Signature\">Signature</a>&gt; for Secp256k1KeyPair"],["impl Signer&lt;<a class=\"enum\" href=\"sui_types/crypto/enum.Signature.html\" title=\"enum sui_types::crypto::Signature\">Signature</a>&gt; for Secp256r1KeyPair"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

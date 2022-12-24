@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["generate_genesis_system_object",""]],"struct":[["Builder",""],["Genesis",""],["GenesisChainParameters","Initial set of parameters for a chain."],["GenesisValidatorInfo",""]]};

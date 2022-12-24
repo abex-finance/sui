@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["commit_object_log",""],["read_object_log",""]],"struct":[["ObjectLog",""]]};

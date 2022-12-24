@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["SafeClient","See `SafeClientMetrics::new` for description of each metrics. The metrics are per validator client."],["SafeClientMetrics","Prometheus metrics which can be displayed in Grafana, queried and alerted on"],["SafeClientMetricsBase",""]]};

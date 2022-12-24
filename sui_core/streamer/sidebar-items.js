@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Streamer","The Streamer splits a mpsc channel into multiple mpsc channels using the subscriber’s `Filter<T>` object. Data will be sent to the subscribers in parallel and the subscription will be dropped if it received a send error."]]};

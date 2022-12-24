@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Envelope",""],["TrustedEnvelope","TrustedEnvelope is a serializable wrapper around Envelope which is Into - in other words it models a verified message which has been written to the db (or some other trusted store), and may be read back from the db without further signature verification."],["VerifiedEnvelope",""]],"trait":[["Message",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["BuildConfig","Wrapper around the core Move `BuildConfig` with some Sui-specific info"],["CompiledPackage","Wrapper around the core Move `CompiledPackage` with some Sui-specific traits and info"]]};

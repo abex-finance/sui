@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["publish_basics_package",""]],"struct":[["SharedCounterTestPayload",""],["SharedCounterWorkload",""]]};

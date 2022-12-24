@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["PrimaryToWorkerServer","The primary-to-worker interface"],["SendMessageSvc",""],["_Inner",""]],"trait":[["PrimaryToWorker","Generated trait containing gRPC methods that should be implemented for use with PrimaryToWorkerServer."]]};

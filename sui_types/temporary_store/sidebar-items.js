@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["empty_for_testing","Create an empty `TemporaryStore` with no backing storage for module resolution. For testing purposes only."],["with_input_objects_for_testing","Create a `TemporaryStore` with the given inputs and no backing storage for module resolution. For testing purposes only."]],"struct":[["InnerTemporaryStore",""],["TemporaryStore",""]]};

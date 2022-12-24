@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["verify_module","All transfer functions (the functions in `sui::transfer`) are “private” in that they are restricted to the module. For example, with `transfer::transfer<T>(...)`, either:"]]};

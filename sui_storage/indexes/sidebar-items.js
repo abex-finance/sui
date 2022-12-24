@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["MAX_TX_RANGE_SIZE",""]],"struct":[["IndexStore",""],["IndexStoreTables",""],["IndexStoreTablesConfigurator","Create config structs for configuring DBMap tables"],["IndexStoreTablesReadOnly","Create an intermediate struct used to open the DBMap tables in secondary mode This is only used internally"],["ObjectIndexChanges",""]]};

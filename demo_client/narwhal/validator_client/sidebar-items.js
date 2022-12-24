@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"opaque":[["",""]],"struct":[["ValidatorClient","The consensus to mempool interface for validator actions."]]};

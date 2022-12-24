@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["SuiNativeCostIndex",""]],"fn":[["_native_cost_schedule",""]]};

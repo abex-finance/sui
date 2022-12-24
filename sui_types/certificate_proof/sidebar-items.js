@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["CertificateProof","CertificateProof is a placeholder for signatures, which indicates that the wrapped message has been proven valid through indirect means, typically inclusion in a certified checkpoint or via f+1 votes that the message is correct."]]};

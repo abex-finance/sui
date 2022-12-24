@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["faucet_request",""],["health","basic handler that responds with a static string"],["main",""],["start_faucet",""]],"opaque":[["",""]],"struct":[["AppState",""],["Args","Start a Sui validator and fullnode for easy testing."]]};

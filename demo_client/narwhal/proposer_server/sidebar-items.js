@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["NodeReadCausalSvc",""],["ProposerServer","/ The API that hosts the endpoints that should be used to help / proposing a block."],["RoundsSvc",""],["_Inner",""]],"trait":[["Proposer","Generated trait containing gRPC methods that should be implemented for use with ProposerServer."]]};

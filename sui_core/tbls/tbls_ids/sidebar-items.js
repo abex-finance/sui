@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["TBlsIds","Threshold BLS (tBLS) requires unique integer “share IDs”. (tBLS will be used soon by the randomness beacon.)"]]};

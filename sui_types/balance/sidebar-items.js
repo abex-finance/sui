@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["BALANCE_MODULE_NAME",""],["BALANCE_STRUCT_NAME",""]],"struct":[["Balance",""],["Supply",""]]};

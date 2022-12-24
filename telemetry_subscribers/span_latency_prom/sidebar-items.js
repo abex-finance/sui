@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["PrometheusSpanError",""]],"struct":[["PrometheusSpanLatencyLayer","A tokio_tracing Layer that records span latencies into Prometheus histograms"]]};
