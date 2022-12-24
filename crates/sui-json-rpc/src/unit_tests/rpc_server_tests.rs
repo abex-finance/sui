@@ -772,6 +772,7 @@ async fn test_locked_sui() -> Result<(), anyhow::Error> {
             ],
             None,
             1000,
+            None,
         )
         .await?;
     let keystore_path = cluster.swarm.dir().join(SUI_KEYSTORE_FILENAME);
@@ -951,6 +952,7 @@ async fn test_delegation_with_locked_sui() -> Result<(), anyhow::Error> {
             ],
             None,
             1000,
+            None,
         )
         .await?;
     let keystore_path = cluster.swarm.dir().join(SUI_KEYSTORE_FILENAME);
