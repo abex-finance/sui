@@ -1,5 +1,15 @@
 # @mysten/sui.js
 
+## 0.21.0
+
+### Minor Changes
+
+- 4fb12ac6d: - removes `transfer` function from framework Coin
+  - renames `newTransferTx` function from framework Coin to `newPayTransaction`. Also it's now a public method and without the need of signer so a dapp can use it
+  - fixes edge cases with pay txs
+- bb14ffdc5: Remove ImmediateReturn and WaitForTxCert from ExecuteTransactionRequestType
+- 7d0f25b61: Add devInspectTransaction, which is similar to dryRunTransaction, but lets you call any Move function(including non-entry function) with arbitrary values.
+
 ## 0.20.0
 
 ### Minor Changes
