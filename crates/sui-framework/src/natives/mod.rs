@@ -152,8 +152,8 @@ pub fn all_natives(
         ),
         (
             "randomness",
-            "native_verify_tbls_signature",
-            make_native!(tbls::verify_tbls_signature),
+            "native_tbls_verify_signature",
+            make_native!(tbls::tbls_verify_signature),
         ),
         (
             "randomness",

@@ -73,7 +73,7 @@ module sui::randomness {
     public fun set<T>(self: &mut Randomness<T>, sig: vector<u8>) {
         assert!(option::is_none(&self.value), EAlreadySet);
         let msg = to_bytes(&Domain, self.epoch, &object::id(self));
-        assert!(native_verify_tbls_signature(self.epoch, &msg, &sig), EInvalidSignature);
+        assert!(native_tbls_verify_signature(self.epoch, &msg, &sig), EInvalidSignature);
         let hashed = sha3_256(sig);
         self.value = option::some(hashed);
     }
@@ -104,7 +104,7 @@ module sui::randomness {
     }
 
     /// Verify signature sig on message msg using the epoch's BLS key.
-    native fun native_verify_tbls_signature(epoch: u64, msg: &vector<u8>, sig: &vector<u8>): bool;
+    native fun native_tbls_verify_signature(epoch: u64, msg: &vector<u8>, sig: &vector<u8>): bool;
 
     /// Helper functions to sign on messages in tests.
     native fun native_tbls_sign(epoch: u64, msg: &vector<u8>): vector<u8>;

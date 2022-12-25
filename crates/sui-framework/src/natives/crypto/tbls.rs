@@ -16,7 +16,7 @@ use std::collections::VecDeque;
 
 pub const SERIALIZATION_FAILED: u64 = 0;
 
-pub fn verify_tbls_signature(
+pub fn tbls_verify_signature(
     _context: &mut NativeContext,
     ty_args: Vec<Type>,
     mut args: VecDeque<Value>,
