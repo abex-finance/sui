@@ -66,13 +66,13 @@ impl ThresholdBlsApiImpl {
     /// - an owned object that exists locally and its previous transaction was processed by the
     ///   consensus.
     async fn verify_object_alive_and_committed(&self, object_id: ObjectID) -> RpcResult<()> {
-        let obj = get_randomness_object(object_id).await?;
+        let obj = self.get_randomness_object(object_id).await?;
         // a shared object that exists locally.
         if let Shared {
             initial_shared_version: _,
         } = obj.owner
         {
-            return Ok();
+            return Ok(());
         }
 
         // TODO: if the object was created/modified in previous epoch -> return true since if it
@@ -93,7 +93,7 @@ impl ThresholdBlsApiImpl {
         //     &ConsensusTransactionKey::Certificate(obj.previous_transaction),
         // );
         // Ok(was_processed.map_err(|e| anyhow!(e))?)
-        Ok()
+        Ok(())
     }
 
     async fn verify_effects_cert(
@@ -132,9 +132,9 @@ impl ThresholdBlsApiImpl {
             ))?;
 
         // Check that the object is indeed a Randomness object.
-        let _obj = get_randomness_object(object_id).await?;
+        let _obj = self.get_randomness_object(object_id).await?;
 
-        Ok()
+        Ok(())
     }
 }
 
