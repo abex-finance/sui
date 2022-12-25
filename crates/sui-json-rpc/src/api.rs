@@ -13,9 +13,9 @@ use sui_json_rpc_types::{
     GetPastObjectDataResponse, GetRawObjectDataResponse, MoveFunctionArgType,
     RPCTransactionRequestParams, SuiCoinMetadata, SuiEventEnvelope, SuiEventFilter,
     SuiExecuteTransactionResponse, SuiMoveNormalizedFunction, SuiMoveNormalizedModule,
-    SuiMoveNormalizedStruct, SuiObjectInfo, SuiTransactionAuthSignersResponse,
-    SuiTransactionBuilderMode, SuiTransactionEffects,SuiTBlsSignObjectCreationEpoch,
-    SuiTBlsSignRandomnessObjectResponse,  s SuiTransactionFilter, SuiTransactionResponse,
+    SuiMoveNormalizedStruct, SuiObjectInfo, SuiTBlsSignObjectCommitmentType,
+    SuiTBlsSignRandomnessObjectResponse, SuiTransactionAuthSignersResponse,
+    SuiTransactionBuilderMode, SuiTransactionEffects, SuiTransactionFilter, SuiTransactionResponse,
     SuiTypeTag, TransactionBytes, TransactionsPage,
 };
 use sui_open_rpc_macros::open_rpc;

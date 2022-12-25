@@ -21,7 +21,7 @@ use sui_types::base_types::{EpochId, ObjectID};
 use sui_types::crypto::{construct_tbls_randomness_object_message, AuthoritySignInfoTrait};
 use sui_types::messages::ConsensusTransactionKey;
 use sui_types::object::Owner::Shared;
-use sui_types::object::{ObjectRead, Owner};
+use sui_types::object::{Object, ObjectRead, Owner};
 
 pub struct ThresholdBlsApiImpl {
     state: Arc<AuthorityState>,
@@ -32,10 +32,31 @@ impl ThresholdBlsApiImpl {
         Self { state }
     }
 
-    fn is_randomness_object(&self, _layout: &MoveStructLayout) -> bool {
+    /// Check that the given layout represents a Randomness object.
+    fn is_randomness_object(&self, layout: &MoveStructLayout) -> bool {
+        println!("!!! is_randomness_object of {:?}", layout);
         // TODO: complete.
         true
     }
+
+    /// Get the object and check if it is a Randomness object.
+    async fn get_randomness_object(&self, object_id: ObjectID) -> RpcResult<Object> {
+        // Get object and check it is a Randomness object.
+        let obj_read = self
+            .state
+            .get_object_read(&object_id)
+            .await
+            .map_err(|e| anyhow!(e))?;
+        let ObjectRead::Exists(_obj_ref, obj, layout) = obj_read else {
+            Err(anyhow!("Object not found"))? };
+        let Some(layout) = layout else {
+            Err(anyhow!("Object does not have a layout"))? };
+        if !self.is_randomness_object(&layout) {
+            Err(anyhow!("Not a Randomness object"))?
+        }
+        Ok(obj)
+    }
+
     /// Return true if the given object is alive and committed according to my local view of (or in
     /// other words, that its creation was committed).
     ///
@@ -44,27 +65,14 @@ impl ThresholdBlsApiImpl {
     /// - an owned object that exists locally and was last modified in previous epochs.
     /// - an owned object that exists locally and its previous transaction was processed by the
     ///   consensus.
-    async fn is_object_alive_and_committed(&self, object_id: ObjectID) -> RpcResult<bool> {
-        let obj_read = self
-            .state
-            .get_object_read(&object_id)
-            .await
-            .map_err(|e| anyhow!(e))?;
-        let ObjectRead::Exists(_obj_ref, obj, layout) = obj_read else {
-            return Ok(false); };
-
-        if let Some(layout) = layout {
-            if !self.is_randomness_object(&layout) {
-                Err(anyhow!("Not a Randomness object"))?
-            }
-        }
-
+    async fn verify_object_alive_and_committed(&self, object_id: ObjectID) -> RpcResult<()> {
+        let obj = get_randomness_object(object_id).await?;
         // a shared object that exists locally.
         if let Shared {
             initial_shared_version: _,
         } = obj.owner
         {
-            return Ok(true);
+            return Ok();
         }
 
         // TODO: if the object was created/modified in previous epoch -> return true since if it
@@ -80,13 +88,12 @@ impl ThresholdBlsApiImpl {
         // objects, erring on the safe side is ok as it merely causes some delay for the user.
         // TODO: get the first version of the object and check its digest instead.
 
-
         // TODO: uncomment after tests pass
         // let was_processed = self.state.epoch_store().is_consensus_message_processed(
         //     &ConsensusTransactionKey::Certificate(obj.previous_transaction),
         // );
         // Ok(was_processed.map_err(|e| anyhow!(e))?)
-        Ok(true)
+        Ok()
     }
 
     async fn verify_effects_cert(
@@ -94,7 +101,7 @@ impl ThresholdBlsApiImpl {
         object_id: ObjectID,
         curr_epoch: EpochId,
         effects_cert: &SuiCertifiedTransactionEffects,
-    ) -> RpcResult<bool> {
+    ) -> RpcResult<()> {
         if effects_cert.auth_sign_info.epoch != curr_epoch {
             Err(anyhow!("Inconsistent epochs"))?
         }
@@ -124,10 +131,10 @@ impl ThresholdBlsApiImpl {
                 "Object was not created/mutated in the provided transaction effects certificate"
             ))?;
 
-        // TODO: Check it is the right type if it exists locally. However, since the tbls threshold
-        // is f+1, it won't be hermetic.
+        // Check that the object is indeed a Randomness object.
+        let _obj = get_randomness_object(object_id).await?;
 
-        Ok(true)
+        Ok()
     }
 }
 
@@ -140,22 +147,16 @@ impl ThresholdBlsApiServer for ThresholdBlsApiImpl {
     async fn tbls_sign_randomness_object(
         &self,
         object_id: ObjectID,
-        object_creation_epoch: SuiTBlsSignObjectCommitmentType,
+        commitment_type: SuiTBlsSignObjectCommitmentType,
     ) -> RpcResult<SuiTBlsSignRandomnessObjectResponse> {
         let curr_epoch = self.state.epoch();
-        match object_creation_epoch {
+        match commitment_type {
             ConsensusCommitted => {
-                if !self.is_object_alive_and_committed(object_id).await? {
-                    Err(anyhow!("Non committed object"))?
-                }
+                self.verify_object_alive_and_committed(object_id).await?;
             }
             FastPathCommitted(effects_cert) => {
-                if !self
-                    .verify_effects_cert(object_id, curr_epoch, &effects_cert)
-                    .await?
-                {
-                    Err(anyhow!("Invalid effects certificate"))?
-                }
+                self.verify_effects_cert(object_id, curr_epoch, &effects_cert)
+                    .await?;
             }
         };
 

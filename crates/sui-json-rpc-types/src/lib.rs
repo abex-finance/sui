@@ -398,10 +398,11 @@ impl Display for SuiParsedTransactionResponse {
 
 #[derive(Serialize, Deserialize, Debug, JsonSchema)]
 pub enum SuiTBlsSignObjectCommitmentType {
-    ConsensusCommitted,
-    FastPathCommitted(SuiCertifiedTransactionEffects),
+    ConsensusCommitted, // Checked against the local view of the consensus.
+    FastPathCommitted(SuiCertifiedTransactionEffects), // Checked against a given effects cert.
 }
 
+// TODO: Switch below to our new XAsBytes wrapper
 #[derive(Serialize, Deserialize, Debug, JsonSchema)]
 pub struct SuiTBlsSignRandomnessObjectResponse {
     #[schemars(with = "Base64")]
